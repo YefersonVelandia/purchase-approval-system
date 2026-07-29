@@ -1,6 +1,9 @@
-import { GetCommand, PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { PurchaseRequestRepository } from "../../application/ports/purchase-request.repository";
-import { PurchaseRequest } from "../../domain/entities/purchase-request.entity";
+import {
+  PurchaseRequest,
+  PurchaseRequestStatus,
+} from "../../domain/entities/purchase-request.entity";
 
 import { dynamoDBClient } from "../database/dynamodb.client";
 
@@ -69,5 +72,38 @@ export class DynamoDBPurchaseRequestRepository implements PurchaseRequestReposit
         createdAt: new Date(item.createdAt),
       }),
     );
+  }
+
+  async updateStatus(id: string, status: PurchaseRequestStatus): Promise<PurchaseRequest | null> {
+    const result = await dynamoDBClient.send(
+      new UpdateCommand({
+        TableName: this.tableName,
+        Key: {
+          id,
+        },
+        UpdateExpression: "SET #status = :status",
+        ExpressionAttributeNames: {
+          "#status": "status",
+        },
+        ExpressionAttributeValues: {
+          ":status": status,
+        },
+        ReturnValues: "ALL_NEW",
+      }),
+    );
+
+    if (!result.Attributes) {
+      return null;
+    }
+
+    return PurchaseRequest.create({
+      id: result.Attributes.id,
+      title: result.Attributes.title,
+      description: result.Attributes.description,
+      amount: result.Attributes.amount,
+      requesterId: result.Attributes.requesterId,
+      status: result.Attributes.status,
+      createdAt: new Date(result.Attributes.createdAt),
+    });
   }
 }

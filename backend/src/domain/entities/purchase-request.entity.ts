@@ -44,4 +44,31 @@ export class PurchaseRequest {
   get data(): PurchaseRequestProps {
     return this.props;
   }
+
+  changeStatus(status: PurchaseRequestStatus): PurchaseRequest {
+    if (!this.canChangeStatus(status)) {
+      throw new Error(`Cannot change status from ${this.props.status} to ${status}`);
+    }
+
+    return new PurchaseRequest({
+      ...this.props,
+      status,
+    });
+  }
+
+  canChangeStatus(newStatus: PurchaseRequestStatus): boolean {
+    // Si el nuevo estado es el mismo que el actual, permite el cambio (devuelve true)
+    if (this.props.status === newStatus) {
+      return true;
+    }
+
+    const transitions: Record<PurchaseRequestStatus, PurchaseRequestStatus[]> = {
+      PENDING: [PurchaseRequestStatus.SIGNED, PurchaseRequestStatus.REJECTED],
+      SIGNED: [PurchaseRequestStatus.COMPLETED, PurchaseRequestStatus.REJECTED],
+      REJECTED: [],
+      COMPLETED: [],
+    };
+
+    return transitions[this.props.status].includes(newStatus);
+  }
 }
