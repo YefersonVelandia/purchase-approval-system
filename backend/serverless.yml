@@ -1,0 +1,30 @@
+service: purchase-approval-system
+
+frameworkVersion: "3"
+
+plugins:
+  - serverless-esbuild
+
+provider:
+  name: aws
+
+  runtime: nodejs20.x
+
+  stage: ${opt:stage, 'dev'}
+
+  region: us-east-1
+
+package:
+  individually: true
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+    target: node20
+    platform: node
+    format: cjs
+    keepNames: true
+
+functions: ${file(serverless/functions.yml)}

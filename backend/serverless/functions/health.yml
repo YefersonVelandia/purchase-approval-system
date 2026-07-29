@@ -1,0 +1,6 @@
+health:
+  handler: src/index.handler
+  events:
+    - httpApi:
+        path: /health
+        method: get
