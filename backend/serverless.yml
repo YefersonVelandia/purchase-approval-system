@@ -27,4 +27,4 @@ custom:
     format: cjs
     keepNames: true
 
-functions: ${file(serverless/functions/health.yml)}
+functions: ${file(serverless/functions.yml)}

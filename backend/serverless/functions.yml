@@ -1,0 +1,13 @@
+health:
+  handler: src/index.handler
+  events:
+    - httpApi:
+        path: /health
+        method: get
+
+createPurchaseRequest:
+  handler: src/adapters/handlers/create-purchase-request.handler.handler
+  events:
+    - httpApi:
+        path: /purchase-requests
+        method: post
