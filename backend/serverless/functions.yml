@@ -50,3 +50,11 @@ listApprovals:
         path: /purchase-requests/{id}/approvals
         method: get
   name: purchase-approval-system-dev-listApprovals
+
+updateApprovalStatus:
+  handler: src/adapters/handlers/update-approval-status.handler.handler
+  events:
+    - httpApi:
+        path: /approvals/{id}
+        method: patch
+  name: purchase-approval-system-dev-updateApprovalStatus
