@@ -3,12 +3,11 @@
   "name": "@purchase-approval/backend",
   "version": "1.0.0",
   "description": "Backend serverless para flujo de aprobaciones",
-  "type": "module",
-  "main": "dist/index.js",
+  "main": "src/index.ts",
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "22.x"
+    "node": ">=20"
   },
   "scripts": {
     "dev": "echo 'pending'",
@@ -23,19 +22,22 @@
     "@aws-sdk/client-dynamodb": "3.1097.0",
     "@aws-sdk/client-s3": "3.1097.0",
     "@aws-sdk/lib-dynamodb": "3.1097.0",
-    "@middy/core": "^7.7.2",
+    "@middy/core": "7.7.2",
     "dotenv": "17.4.2",
-    "uuid": "^11.0.0",
-    "zod": "^4.4.3"
+    "uuid": "11.0.0",
+    "zod": "4.4.3"
   },
   "devDependencies": {
+    "@types/aws-lambda": "8.10.162",
     "@types/jest": "^29.5.14",
     "@types/node": "22.10.2",
+    "esbuild": "0.24.2",
     "eslint": "9.17.0",
     "eslint-config-prettier": "10.1.8",
     "jest": "29.7.0",
     "prettier": "^3.4.2",
-    "serverless": "4.40.0",
+    "serverless": "3.39.0",
+    "serverless-esbuild": "1.57.2",
     "ts-jest": "^29.2.5",
     "typescript": "5.7.3"
   }
