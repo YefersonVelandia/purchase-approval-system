@@ -1,7 +1,14 @@
 import { Approval, ApprovalStatus } from "../../domain/entities/approval.entity";
 
+import {
+  PurchaseRequest,
+  PurchaseRequestStatus,
+} from "../../domain/entities/purchase-request.entity";
+
 import { UpdateApprovalStatusUseCase } from "./update-approval-status.use-case";
+
 import { ApprovalRepository } from "../ports/approval.repository";
+import { PurchaseRequestRepository } from "../ports/purchase-request.repository";
 
 describe("UpdateApprovalStatusUseCase", () => {
   it("should update approval status to APPROVED", async () => {
@@ -14,14 +21,31 @@ describe("UpdateApprovalStatusUseCase", () => {
       updatedAt: new Date(),
     });
 
-    const repository: ApprovalRepository = {
+    const purchaseRequest = PurchaseRequest.create({
+      id: "request-123",
+      title: "Laptop",
+      description: "Developer laptop",
+      amount: 1500,
+      requesterId: "user-123",
+      status: PurchaseRequestStatus.PENDING,
+      createdAt: new Date(),
+    });
+
+    const approvalRepository: ApprovalRepository = {
       save: jest.fn(),
       findById: jest.fn().mockResolvedValue(approval),
-      findByPurchaseRequestId: jest.fn(),
+      findByPurchaseRequestId: jest.fn().mockResolvedValue([approval]),
       updateStatus: jest.fn(),
     };
 
-    const useCase = new UpdateApprovalStatusUseCase(repository);
+    const purchaseRequestRepository: PurchaseRequestRepository = {
+      save: jest.fn(),
+      findById: jest.fn().mockResolvedValue(purchaseRequest),
+      findAll: jest.fn(),
+      updateStatus: jest.fn(),
+    };
+
+    const useCase = new UpdateApprovalStatusUseCase(approvalRepository, purchaseRequestRepository);
 
     const result = await useCase.execute({
       id: "approval-123",
@@ -30,18 +54,27 @@ describe("UpdateApprovalStatusUseCase", () => {
 
     expect(result.status).toBe(ApprovalStatus.APPROVED);
 
-    expect(repository.updateStatus).toHaveBeenCalled();
+    expect(approvalRepository.updateStatus).toHaveBeenCalled();
+
+    expect(purchaseRequestRepository.updateStatus).not.toHaveBeenCalled();
   });
 
   it("should reject update when approval does not exist", async () => {
-    const repository: ApprovalRepository = {
+    const approvalRepository: ApprovalRepository = {
       save: jest.fn(),
       findById: jest.fn().mockResolvedValue(null),
       findByPurchaseRequestId: jest.fn(),
       updateStatus: jest.fn(),
     };
 
-    const useCase = new UpdateApprovalStatusUseCase(repository);
+    const purchaseRequestRepository: PurchaseRequestRepository = {
+      save: jest.fn(),
+      findById: jest.fn(),
+      findAll: jest.fn(),
+      updateStatus: jest.fn(),
+    };
+
+    const useCase = new UpdateApprovalStatusUseCase(approvalRepository, purchaseRequestRepository);
 
     await expect(
       useCase.execute({
@@ -61,14 +94,21 @@ describe("UpdateApprovalStatusUseCase", () => {
       updatedAt: new Date(),
     });
 
-    const repository: ApprovalRepository = {
+    const approvalRepository: ApprovalRepository = {
       save: jest.fn(),
       findById: jest.fn().mockResolvedValue(approval),
-      findByPurchaseRequestId: jest.fn(),
+      findByPurchaseRequestId: jest.fn().mockResolvedValue([approval]),
       updateStatus: jest.fn(),
     };
 
-    const useCase = new UpdateApprovalStatusUseCase(repository);
+    const purchaseRequestRepository: PurchaseRequestRepository = {
+      save: jest.fn(),
+      findById: jest.fn(),
+      findAll: jest.fn(),
+      updateStatus: jest.fn(),
+    };
+
+    const useCase = new UpdateApprovalStatusUseCase(approvalRepository, purchaseRequestRepository);
 
     await expect(
       useCase.execute({

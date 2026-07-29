@@ -5,6 +5,7 @@ import { DynamoDBApprovalRepository } from "../../infrastructure/repositories/dy
 import { UpdateApprovalStatusUseCase } from "../../application/use-cases/update-approval-status.use-case";
 
 import { ApprovalStatus } from "../../domain/entities/approval.entity";
+import { DynamoDBPurchaseRequestRepository } from "../../infrastructure/repositories/dynamodb-purchase-request.repository";
 
 export const handler = async (
   event: APIGatewayProxyEventV2,
@@ -23,9 +24,11 @@ export const handler = async (
 
     const body = JSON.parse(event.body ?? "{}");
 
-    const repository = new DynamoDBApprovalRepository();
+    const approvalRepository = new DynamoDBApprovalRepository();
 
-    const useCase = new UpdateApprovalStatusUseCase(repository);
+    const purchaseRequestRepository = new DynamoDBPurchaseRequestRepository();
+
+    const useCase = new UpdateApprovalStatusUseCase(approvalRepository, purchaseRequestRepository);
 
     const result = await useCase.execute({
       id,

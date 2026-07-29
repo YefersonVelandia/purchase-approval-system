@@ -13,7 +13,7 @@ export class UpdatePurchaseRequestStatusUseCase {
 
     const updatedRequest = request.changeStatus(status);
 
-    await this.repository.updateStatus(id, updatedRequest.data.status);
+    await this.repository.updateStatus(id, updatedRequest);
 
     return updatedRequest.data;
   }
