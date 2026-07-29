@@ -1,4 +1,4 @@
-import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { PurchaseRequestRepository } from "../../application/ports/purchase-request.repository";
 import { PurchaseRequest } from "../../domain/entities/purchase-request.entity";
 
@@ -14,9 +14,12 @@ export class DynamoDBPurchaseRequestRepository implements PurchaseRequestReposit
       new PutCommand({
         TableName: this.tableName,
         Item: {
-          PK: `REQUEST#${request.id}`,
-          SK: "METADATA",
-          ...request.data,
+          id: request.id,
+          title: request.data.title,
+          description: request.data.description,
+          amount: request.data.amount,
+          requesterId: request.data.requesterId,
+          status: request.data.status,
           createdAt: request.data.createdAt.toISOString(),
         },
       }),
@@ -24,8 +27,27 @@ export class DynamoDBPurchaseRequestRepository implements PurchaseRequestReposit
   }
 
   async findById(id: string): Promise<PurchaseRequest | null> {
-    void id;
+    const result = await dynamoDBClient.send(
+      new GetCommand({
+        TableName: this.tableName,
+        Key: {
+          id,
+        },
+      }),
+    );
 
-    return null;
+    if (!result.Item) {
+      return null;
+    }
+
+    return PurchaseRequest.create({
+      id: result.Item.id,
+      title: result.Item.title,
+      description: result.Item.description,
+      amount: result.Item.amount,
+      requesterId: result.Item.requesterId,
+      status: result.Item.status,
+      createdAt: new Date(result.Item.createdAt),
+    });
   }
 }

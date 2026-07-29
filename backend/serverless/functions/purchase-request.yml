@@ -4,3 +4,11 @@ createPurchaseRequest:
     - httpApi:
         path: /purchase-requests
         method: post
+
+getPurchaseRequest:
+  handler: src/adapters/handlers/get-purchase-request.handler.handler
+  events:
+    - httpApi:
+        path: /purchase-requests/{id}
+        method: get
+  name: purchase-approval-system-dev-getPurchaseRequest
