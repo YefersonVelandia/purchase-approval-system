@@ -1,4 +1,4 @@
-import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { PurchaseRequestRepository } from "../../application/ports/purchase-request.repository";
 import { PurchaseRequest } from "../../domain/entities/purchase-request.entity";
 
@@ -49,5 +49,25 @@ export class DynamoDBPurchaseRequestRepository implements PurchaseRequestReposit
       status: result.Item.status,
       createdAt: new Date(result.Item.createdAt),
     });
+  }
+
+  async findAll(): Promise<PurchaseRequest[]> {
+    const result = await dynamoDBClient.send(
+      new ScanCommand({
+        TableName: this.tableName,
+      }),
+    );
+
+    return (result.Items ?? []).map((item) =>
+      PurchaseRequest.create({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        amount: item.amount,
+        requesterId: item.requesterId,
+        status: item.status,
+        createdAt: new Date(item.createdAt),
+      }),
+    );
   }
 }

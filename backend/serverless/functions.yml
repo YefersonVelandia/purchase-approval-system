@@ -18,3 +18,11 @@ getPurchaseRequest:
     - httpApi:
         path: /purchase-requests/{id}
         method: get
+
+listPurchaseRequests:
+  handler: src/adapters/handlers/list-purchase-requests.handler.handler
+  events:
+    - httpApi:
+        path: /purchase-requests
+        method: get
+  name: purchase-approval-system-dev-listPurchaseRequests
