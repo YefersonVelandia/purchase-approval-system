@@ -28,3 +28,8 @@ Thumbs.db
 
 # AWS credentials
 .aws/
+
+.esbuild/
+dist/
+node_modules/
+.env

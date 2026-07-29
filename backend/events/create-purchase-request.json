@@ -1,0 +1,5 @@
+{
+  "body": "{\"title\":\"Laptop\",\"description\":\"Developer laptop\",\"amount\":1500,\"requesterId\":\"user-123\"}",
+  "headers": {},
+  "requestContext": {}
+}

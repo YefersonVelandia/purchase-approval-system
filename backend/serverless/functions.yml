@@ -1,0 +1,60 @@
+health:
+  handler: src/index.handler
+  events:
+    - httpApi:
+        path: /health
+        method: get
+
+createPurchaseRequest:
+  handler: src/adapters/handlers/create-purchase-request.handler.handler
+  events:
+    - httpApi:
+        path: /purchase-requests
+        method: post
+
+getPurchaseRequest:
+  handler: src/adapters/handlers/get-purchase-request.handler.handler
+  events:
+    - httpApi:
+        path: /purchase-requests/{id}
+        method: get
+
+listPurchaseRequests:
+  handler: src/adapters/handlers/list-purchase-requests.handler.handler
+  events:
+    - httpApi:
+        path: /purchase-requests
+        method: get
+  name: purchase-approval-system-dev-listPurchaseRequests
+
+updatePurchaseRequestStatus:
+  handler: src/adapters/handlers/update-purchase-request-status.handler.handler
+  events:
+    - httpApi:
+        path: /purchase-requests/{id}/status
+        method: patch
+  name: purchase-approval-system-dev-updatePurchaseRequestStatus
+
+createApproval:
+  handler: src/adapters/handlers/create-approval.handler.handler
+  events:
+    - httpApi:
+        path: /purchase-requests/{id}/approvals
+        method: post
+  name: purchase-approval-system-dev-createApproval
+
+listApprovals:
+  handler: src/adapters/handlers/list-approvals.handler.handler
+  events:
+    - httpApi:
+        path: /purchase-requests/{id}/approvals
+        method: get
+  name: purchase-approval-system-dev-listApprovals
+
+updateApprovalStatus:
+  handler: src/adapters/handlers/update-approval-status.handler.handler
+  events:
+    - httpApi:
+        path: /approvals/{id}
+        method: patch
+  name: purchase-approval-system-dev-updateApprovalStatus
