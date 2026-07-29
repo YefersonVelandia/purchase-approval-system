@@ -26,3 +26,11 @@ listPurchaseRequests:
         path: /purchase-requests
         method: get
   name: purchase-approval-system-dev-listPurchaseRequests
+
+updatePurchaseRequestStatus:
+  handler: src/adapters/handlers/update-purchase-request-status.handler.handler
+  events:
+    - httpApi:
+        path: /purchase-requests/{id}/status
+        method: patch
+  name: purchase-approval-system-dev-updatePurchaseRequestStatus
