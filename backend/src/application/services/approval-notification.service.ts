@@ -13,8 +13,9 @@ export class ApprovalNotificationService {
 
     // Mapeamos cada aprobación a una promesa de envío y las ejecutamos en paralelo
     const notificationPromises = approvals.map(async (approval) => {
-      const approvalLink =
-        `https://dominio.com/approve?solicitud_id=${purchaseRequest.id}` +
+      const baseUrl = process.env.APPROVAL_BASE_URL || "http://localhost:3001/approvals";
+    const approvalLink =
+        `${baseUrl}/approve?solicitud_id=${purchaseRequest.id}` +
         `&approver_token=${approval.data.approvalToken}`;
 
       await this.notificationRepository.send({
