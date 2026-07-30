@@ -5,7 +5,7 @@ const { ModuleFederationPlugin } = require("webpack").container;
 
 module.exports = (env, argv) => {
   const mode = argv.mode || "development";
-  const port = 3000;
+  const port = 3001;
 
   return {
     mode,
