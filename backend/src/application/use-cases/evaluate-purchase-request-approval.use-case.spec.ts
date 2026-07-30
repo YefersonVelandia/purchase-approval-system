@@ -69,6 +69,7 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
       findById: jest.fn(),
       findByPurchaseRequestId: jest.fn().mockResolvedValue(approvals),
       updateStatus: jest.fn(),
+      findByApprovalToken: jest.fn(),
     };
 
     const requestRepository: PurchaseRequestRepository = {
@@ -134,6 +135,7 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
       findById: jest.fn(),
       findByPurchaseRequestId: jest.fn().mockResolvedValue(approvals),
       updateStatus: jest.fn(),
+      findByApprovalToken: jest.fn(),
     };
 
     const requestRepository: PurchaseRequestRepository = {
@@ -175,6 +177,7 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
       findById: jest.fn(),
       findByPurchaseRequestId: jest.fn().mockResolvedValue(approvals),
       updateStatus: jest.fn(),
+      findByApprovalToken: jest.fn(),
     };
 
     const requestRepository: PurchaseRequestRepository = {

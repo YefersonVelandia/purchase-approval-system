@@ -23,6 +23,7 @@ describe("ListApprovalsUseCase", () => {
       findById: jest.fn(),
       findByPurchaseRequestId: jest.fn().mockResolvedValue(approvals),
       updateStatus: jest.fn(),
+      findByApprovalToken: jest.fn(),
     };
 
     const useCase = new ListApprovalsUseCase(repository);
@@ -41,6 +42,7 @@ describe("ListApprovalsUseCase", () => {
       findById: jest.fn(),
       findByPurchaseRequestId: jest.fn().mockResolvedValue([]),
       updateStatus: jest.fn(),
+      findByApprovalToken: jest.fn(),
     };
 
     const useCase = new ListApprovalsUseCase(repository);

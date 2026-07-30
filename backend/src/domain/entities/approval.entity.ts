@@ -9,9 +9,9 @@ export interface ApprovalProps {
   purchaseRequestId: string;
   approverId: string;
   approvalToken: string;
+  status: ApprovalStatus;
   otpCode?: string;
   otpExpiresAt?: Date;
-  status: ApprovalStatus;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -50,6 +50,15 @@ export class Approval {
     return new Approval({
       ...this.props,
       status,
+      updatedAt: new Date(),
+    });
+  }
+
+  generateOtp(otpCode: string, otpExpiresAt: Date): Approval {
+    return new Approval({
+      ...this.props,
+      otpCode,
+      otpExpiresAt,
       updatedAt: new Date(),
     });
   }

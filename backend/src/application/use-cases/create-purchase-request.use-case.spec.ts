@@ -36,6 +36,7 @@ describe("CreatePurchaseRequestUseCase", () => {
         },
       ]),
       updateStatus: jest.fn(),
+      findByApprovalToken: jest.fn(),
     };
 
     const notificationRepository = {
