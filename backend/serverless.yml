@@ -46,9 +46,10 @@ provider:
   environment:
     PURCHASE_REQUESTS_TABLE: PurchaseRequests-${self:provider.stage}
     APPROVALS_TABLE: Approvals-${self:provider.stage}
+    MOCK_EMAILS_TABLE: MockEmails-${self:provider.stage}
     S3_BUCKET_NAME: !Ref EvidenceBucket
     NODE_ENV: ${self:provider.stage}
-    APPROVAL_BASE_URL: ${env:APPROVAL_BASE_URL, 'http://localhost:3001/approvals'}
+    APPROVAL_BASE_URL: ${env:APPROVAL_BASE_URL, 'http://purchase-approval-ui-594954690298.s3-website-us-east-1.amazonaws.com/#/approvals'}
 
   iamRoleStatements:
     - Effect: Allow
@@ -58,11 +59,13 @@ provider:
         - dynamodb:Scan
         - dynamodb:UpdateItem
         - dynamodb:Query
+        - dynamodb:DeleteItem
       Resource:
         - arn:aws:dynamodb:${self:provider.region}:*:table/PurchaseRequests-${self:provider.stage}
         - arn:aws:dynamodb:${self:provider.region}:*:table/PurchaseRequests-${self:provider.stage}/index/*
         - arn:aws:dynamodb:${self:provider.region}:*:table/Approvals-${self:provider.stage}
         - arn:aws:dynamodb:${self:provider.region}:*:table/Approvals-${self:provider.stage}/index/*
+        - arn:aws:dynamodb:${self:provider.region}:*:table/MockEmails-${self:provider.stage}
     - Effect: Allow
       Action:
         - s3:PutObject
@@ -146,6 +149,18 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+
+    MockEmailsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: MockEmails-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
         BillingMode: PAY_PER_REQUEST
 
     EvidenceBucket:
