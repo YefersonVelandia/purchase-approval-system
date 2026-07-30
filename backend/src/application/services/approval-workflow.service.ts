@@ -11,6 +11,8 @@ export class ApprovalWorkflowService {
 
   constructor(private readonly approvalRepository: ApprovalRepository) {}
 
+  // Crea un Approval por cada aprobador con token único como mecanismo
+  // de seguridad para el link de aprobación (aprobador específico)
   async initialize(purchaseRequest: PurchaseRequest): Promise<void> {
     for (const approver of purchaseRequest.data.approvers) {
 

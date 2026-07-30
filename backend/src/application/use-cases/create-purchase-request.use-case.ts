@@ -30,6 +30,11 @@ export class CreatePurchaseRequestUseCase {
     );
   }
 
+  // Orquestación completa del flujo de creación:
+  // 1. Crear entidad PurchaseRequest con validaciones de dominio
+  // 2. Persistir en DynamoDB
+  // 3. Inicializar 3 approvals con tokens UUID (ApprovalWorkflowService)
+  // 4. Enviar notificaciones simuladas con links de aprobación
   async execute(input: CreatePurchaseRequestDto): Promise<PurchaseRequest> {
     const purchaseRequest = PurchaseRequest.create({
       id: randomUUID(),

@@ -41,6 +41,7 @@ export class Approval {
   }
 
   changeStatus(status: ApprovalStatus, signedBy?: string): Approval {
+    // Una vez APPROVED o REJECTED, el estado es irreversible
     if (this.props.status === ApprovalStatus.APPROVED && status !== ApprovalStatus.APPROVED) {
       throw new Error(`Cannot change approval status from ${this.props.status} to ${status}`);
     }
@@ -71,6 +72,7 @@ export class Approval {
     });
   }
 
+  // Valida OTP por comparación directa + verificación de expiración (3 min)
   isOtpValid(code: string): boolean {
     if (!this.props.otpCode || !this.props.otpExpiresAt) {
       return false;

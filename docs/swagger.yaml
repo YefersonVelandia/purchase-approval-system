@@ -1,0 +1,633 @@
+openapi: "3.0.3"
+info:
+  title: Purchase Approval System API
+  description: >
+    API del sistema de aprobación de solicitudes de compra con firmas digitales
+    concatenadas. Gestiona el ciclo de vida completo de una solicitud de compra:
+    creación, asignación de aprobadores, notificaciones OTP, firma digital
+    (aprobación/rechazo), y generación de PDF de evidencia.
+  version: "1.0.0"
+  contact:
+    name: Yeferson Velandia
+servers:
+  - url: http://localhost:3000
+    description: Servidor local con Serverless Offline
+  - url: https://api.purchase-approval.com/dev
+    description: Ambiente de desarrollo AWS
+  - url: https://api.purchase-approval.com/prod
+    description: Ambiente de producción AWS
+tags:
+  - name: Solicitudes
+    description: CRUD de solicitudes de compra
+  - name: Aprobaciones
+    description: Gestión de aprobaciones por token
+  - name: OTP
+    description: Generación y validación de OTP
+  - name: Notificaciones
+    description: Simulación de correos electrónicos
+  - name: Evidencias
+    description: Descarga de PDF de evidencia
+  - name: Health
+    description: Health check del servicio
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Verificar estado del servicio
+      operationId: healthCheck
+      responses:
+        "200":
+          description: Servicio operativo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+  /purchase-requests:
+    post:
+      tags:
+        - Solicitudes
+      summary: Crear una solicitud de compra
+      description: >
+        Crea una nueva solicitud de compra con exactamente 3 aprobadores.
+        Inicializa automáticamente las aprobaciones y envía notificaciones
+        simuladas con los links de aprobación.
+      operationId: createPurchaseRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePurchaseRequestInput"
+      responses:
+        "201":
+          description: Solicitud creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PurchaseRequest"
+        "400":
+          description: Error de validación (aprobadores, monto, etc.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    get:
+      tags:
+        - Solicitudes
+      summary: Listar todas las solicitudes de compra
+      operationId: listPurchaseRequests
+      responses:
+        "200":
+          description: Lista de solicitudes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PurchaseRequest"
+  /purchase-requests/{id}:
+    get:
+      tags:
+        - Solicitudes
+      summary: Obtener detalle de una solicitud
+      operationId: getPurchaseRequest
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID de la solicitud
+      responses:
+        "200":
+          description: Detalle de la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PurchaseRequest"
+        "404":
+          description: Solicitud no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /purchase-requests/{id}/status:
+    patch:
+      tags:
+        - Solicitudes
+      summary: Actualizar estado de una solicitud
+      operationId: updatePurchaseRequestStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID de la solicitud
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: "#/components/schemas/PurchaseRequestStatus"
+      responses:
+        "200":
+          description: Estado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PurchaseRequest"
+        "400":
+          description: Transición de estado inválida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /purchase-requests/{id}/approvals:
+    get:
+      tags:
+        - Aprobaciones
+      summary: Listar aprobaciones de una solicitud
+      operationId: listApprovals
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID de la solicitud
+      responses:
+        "200":
+          description: Lista de aprobaciones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Approval"
+    post:
+      tags:
+        - Aprobaciones
+      summary: Crear una aprobación manual para una solicitud
+      operationId: createApproval
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID de la solicitud
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - approverId
+              properties:
+                approverId:
+                  type: string
+                  description: Email del aprobador
+      responses:
+        "201":
+          description: Aprobación creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Approval"
+  /approvals/{id}:
+    patch:
+      tags:
+        - Aprobaciones
+      summary: Aprobar o rechazar una solicitud (firma digital)
+      description: >
+        Actualiza el estado de una aprobación a APPROVED o REJECTED.
+        Si es la tercera firma (todas completadas), genera automáticamente
+        el PDF de evidencia y cambia la solicitud a COMPLETED.
+        Si algún aprobador rechaza, la solicitud pasa a REJECTED.
+      operationId: updateApprovalStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID de la aprobación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: "#/components/schemas/ApprovalStatus"
+                signedBy:
+                  type: string
+                  description: Nombre del firmante
+      responses:
+        "200":
+          description: Estado de aprobación actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Approval"
+        "400":
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /approvals/{token}/otp:
+    get:
+      tags:
+        - OTP
+      summary: Generar código OTP para aprobación
+      description: >
+        Genera un código OTP de 6 dígitos con expiración de 3 minutos.
+        El OTP se asocia al token de aprobación y es necesario para
+        validar la identidad antes de aprobar o rechazar.
+      operationId: generateOtp
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Token único de aprobación
+      responses:
+        "200":
+          description: OTP generado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtpResponse"
+        "404":
+          description: Token de aprobación no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /approvals/{token}/validate-otp:
+    post:
+      tags:
+        - OTP
+      summary: Validar código OTP
+      description: >
+        Valida que el código OTP ingresado coincida con el generado y
+        no haya expirado (3 minutos de vigencia).
+      operationId: validateOtp
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Token único de aprobación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - otpCode
+              properties:
+                otpCode:
+                  type: string
+                  description: Código OTP de 6 dígitos
+      responses:
+        "200":
+          description: OTP válido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidateOtpResponse"
+        "401":
+          description: OTP inválido o expirado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /mock-mail:
+    get:
+      tags:
+        - Notificaciones
+      summary: Obtener correos simulados
+      description: >
+        Retorna todos los correos electrónicos simulados que se han
+        enviado durante el proceso de aprobación. Incluye los links
+        con tokens para que los aprobadores accedan.
+      operationId: getMockMails
+      responses:
+        "200":
+          description: Lista de correos simulados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MockEmail"
+  /api/solicitudes/{id}/evidencia.pdf:
+    get:
+      tags:
+        - Evidencias
+      summary: Descargar PDF de evidencia
+      description: >
+        Genera y descarga un PDF con la evidencia del proceso de aprobación.
+        Solo disponible cuando la solicitud está en estado COMPLETED
+        (las 3 aprobaciones fueron firmadas).
+        El PDF incluye: datos de la solicitud, nombre de aprobadores,
+        estados y fechas de firma.
+      operationId: downloadEvidencePdf
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID de la solicitud
+      responses:
+        "200":
+          description: PDF de evidencia
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Solicitud no completada o ID faltante
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Solicitud no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        service:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - status
+    CreatePurchaseRequestInput:
+      type: object
+      required:
+        - title
+        - description
+        - amount
+        - requesterId
+        - approvers
+      properties:
+        title:
+          type: string
+          description: Título de la solicitud
+          example: Compra equipos TI
+        description:
+          type: string
+          description: Descripción detallada
+          example: Compra de laptops para el equipo de desarrollo
+        amount:
+          type: number
+          description: Monto de la compra
+          minimum: 0.01
+          example: 5000000
+        requesterId:
+          type: string
+          description: Email del solicitante
+          example: juan.perez@empresa.com
+        approvers:
+          type: array
+          minItems: 3
+          maxItems: 3
+          description: Exactamente 3 aprobadores con roles únicos
+          items:
+            $ref: "#/components/schemas/ApproverInput"
+    ApproverInput:
+      type: object
+      required:
+        - name
+        - email
+        - role
+      properties:
+        name:
+          type: string
+          description: Nombre del aprobador
+          example: Carlos Perez
+        email:
+          type: string
+          format: email
+          description: Email del aprobador
+          example: carlos@empresa.com
+        role:
+          $ref: "#/components/schemas/ApproverRole"
+    PurchaseRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID único de la solicitud
+        title:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+        requesterId:
+          type: string
+        approvers:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApproverInput"
+        status:
+          $ref: "#/components/schemas/PurchaseRequestStatus"
+        createdAt:
+          type: string
+          format: date-time
+        evidenceUrl:
+          type: string
+          nullable: true
+          description: URL del PDF de evidencia (solo cuando COMPLETED)
+      required:
+        - id
+        - title
+        - description
+        - amount
+        - requesterId
+        - approvers
+        - status
+        - createdAt
+    PurchaseRequestStatus:
+      type: string
+      enum:
+        - PENDING
+        - SIGNED
+        - REJECTED
+        - COMPLETED
+      description: |
+        Estados de una solicitud:
+        * PENDING - Pendiente de aprobación
+        * SIGNED - Firmada parcialmente
+        * REJECTED - Rechazada por al menos un aprobador
+        * COMPLETED - Completada (3 firmas)
+    ApproverRole:
+      type: string
+      enum:
+        - MANAGER
+        - FINANCE
+        - LEGAL
+      description: Roles únicos de aprobadores
+    Approval:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        purchaseRequestId:
+          type: string
+          format: uuid
+        approverId:
+          type: string
+          description: Email del aprobador
+        approvalToken:
+          type: string
+          format: uuid
+          description: Token único para la ruta de aprobación
+        status:
+          $ref: "#/components/schemas/ApprovalStatus"
+        otpCode:
+          type: string
+          nullable: true
+        otpExpiresAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        signedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Fecha en que se firmó
+        signedBy:
+          type: string
+          nullable: true
+          description: Nombre del firmante
+      required:
+        - id
+        - purchaseRequestId
+        - approverId
+        - approvalToken
+        - status
+        - createdAt
+        - updatedAt
+    ApprovalStatus:
+      type: string
+      enum:
+        - PENDING
+        - APPROVED
+        - REJECTED
+    OtpResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        approvalId:
+          type: string
+          format: uuid
+        otpCode:
+          type: string
+          description: Código OTP generado (6 dígitos)
+        otpExpiresAt:
+          type: string
+          format: date-time
+          description: Fecha de expiración del OTP (+3 minutos)
+      required:
+        - message
+        - approvalId
+        - otpCode
+        - otpExpiresAt
+    ValidateOtpResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        approvalId:
+          type: string
+          format: uuid
+        purchaseRequestId:
+          type: string
+          format: uuid
+        approverId:
+          type: string
+      required:
+        - message
+        - approvalId
+        - purchaseRequestId
+        - approverId
+    MockEmail:
+      type: object
+      properties:
+        to:
+          type: string
+          description: Email del destinatario
+        subject:
+          type: string
+          description: Asunto del correo
+        body:
+          type: string
+          description: Cuerpo del correo
+        url:
+          type: string
+          nullable: true
+          description: Link de aprobación generado
+        sentAt:
+          type: string
+          format: date-time
+          description: Fecha de envío
+      required:
+        - to
+        - subject
+        - body
+        - sentAt
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Mensaje de error descriptivo
