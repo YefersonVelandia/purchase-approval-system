@@ -20,10 +20,13 @@ export const handler = async (
       body: JSON.stringify(result),
     };
   } catch (error) {
+    console.error("listPurchaseRequests error:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({
         message: error instanceof Error ? error.message : "Internal server error",
+        errorName: error instanceof Error ? error.constructor.name : typeof error,
+        ...(error instanceof Error && { stack: error.stack?.split("\n").slice(0, 5).join("\n") }),
       }),
     };
   }
