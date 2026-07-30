@@ -17,6 +17,7 @@ export interface PurchaseRequest {
   approvers: Approver[];
   status: PurchaseRequestStatus;
   createdAt: string;
+  evidenceUrl?: string | null;
 }
 
 export interface CreatePurchaseRequestPayload {

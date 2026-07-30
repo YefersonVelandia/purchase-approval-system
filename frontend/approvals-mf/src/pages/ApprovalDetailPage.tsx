@@ -4,6 +4,8 @@ import ApprovalDetail from "../components/ApprovalDetail";
 import ApprovalActions from "../components/ApprovalActions";
 import { useApprovalFlow } from "../app/ApprovalContext";
 import { approvalService } from "../services/approval.service";
+import { LoadingScreen } from "../components/ui/Spinner";
+import ErrorState from "../components/ui/ErrorState";
 
 const ApprovalDetailPage: React.FC = () => {
   const navigate = useNavigate();
@@ -48,21 +50,22 @@ const ApprovalDetailPage: React.FC = () => {
     navigate("/approvals/approve/result", { replace: true });
   };
 
-  if (loading) return <div className="page-status">Cargando detalle de la solicitud...</div>;
-  if (error) return <div className="page-status page-error">{error}</div>;
-  if (!state.purchaseRequest) return <div className="page-status page-error">Solicitud no encontrada</div>;
+  if (loading) return <LoadingScreen message="Cargando detalle de la solicitud..." />;
+  if (error) return <ErrorState message={error} />;
+  if (!state.purchaseRequest) return <ErrorState message="Solicitud no encontrada" />;
 
   return (
-    <div className="approval-detail-page">
-      <ApprovalDetail request={state.purchaseRequest} />
-      <div className="approval-section">
-        <h3>Acción de aprobación</h3>
-        <ApprovalActions
-          onApprove={handleApprove}
-          onReject={handleReject}
-          approverName={state.approval?.approverId || ""}
-        />
+    <div className="max-w-2xl mx-auto space-y-6">
+      <div>
+        <h1 className="text-xl font-semibold text-gray-900">Detalle de Solicitud</h1>
+        <p className="text-sm text-gray-500 mt-1">Revisa la información antes de aprobar o rechazar</p>
       </div>
+      <ApprovalDetail request={state.purchaseRequest} />
+      <ApprovalActions
+        onApprove={handleApprove}
+        onReject={handleReject}
+        approverName={state.approverId || state.approval?.approverId || ""}
+      />
     </div>
   );
 };

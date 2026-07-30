@@ -20,4 +20,7 @@ export const requestsService = {
 
   getApprovals: (purchaseRequestId: string): Promise<Approval[]> =>
     httpClient.get(`/purchase-requests/${purchaseRequestId}/approvals`).then((res) => res.data),
+
+  getEvidenceUrl: (id: string): string =>
+    `${API_BASE_URL}/api/solicitudes/${id}/evidencia.pdf`,
 };

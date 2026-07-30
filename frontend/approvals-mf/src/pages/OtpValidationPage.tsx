@@ -13,14 +13,14 @@ const OtpValidationPage: React.FC = () => {
   const { state, setApprovalId, setApproverId, setSolicitudId } = useApprovalFlow();
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (otpCode: string) => {
+  const handleSubmit = async (otpValue: string) => {
     if (!state.approverToken) {
       setError("Token de aprobación no encontrado. Vuelve a iniciar el proceso.");
       return;
     }
 
     try {
-      const res = await approvalService.validateOtp(state.approverToken, otpCode);
+      const res = await approvalService.validateOtp(state.approverToken, otpValue);
       setApprovalId(res.approvalId);
       setApproverId(res.approverId);
       const id = state.solicitudId || solicitudIdFromUrl || "";
@@ -41,7 +41,12 @@ const OtpValidationPage: React.FC = () => {
   };
 
   return (
-    <OtpForm onSubmit={handleSubmit} error={error} expiresAt={expiresAt} mockCode={otpCode} />
+    <OtpForm
+      onSubmit={handleSubmit}
+      error={error}
+      expiresAt={expiresAt}
+      mockCode={otpCode}
+    />
   );
 };
 
