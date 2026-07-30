@@ -25,6 +25,24 @@ provider:
     Environment: ${self:provider.stage}
     ManagedBy: Serverless
 
+  httpApi:
+    cors:
+      allowedOrigins:
+        - "*"
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+        - X-Amz-Date
+        - X-Api-Key
+        - X-Amz-Security-Token
+      allowedMethods:
+        - GET
+        - POST
+        - PATCH
+        - DELETE
+        - OPTIONS
+      allowCredentials: false
+
   environment:
     PURCHASE_REQUESTS_TABLE: PurchaseRequests-${self:provider.stage}
     APPROVALS_TABLE: Approvals-${self:provider.stage}
