@@ -59,6 +59,7 @@ custom:
     httpPort: 3000
     lambdaPort: 4002
     lambdaHandler: handler
+    location: .esbuild/.build
     noPrependStageInUrl: true
 
   dynamodb:
