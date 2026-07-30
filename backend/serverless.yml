@@ -4,6 +4,8 @@ frameworkVersion: "3"
 
 plugins:
   - serverless-esbuild
+  - serverless-offline
+  - serverless-dynamodb-local
 
 provider:
   name: aws
@@ -13,6 +15,32 @@ provider:
   stage: ${opt:stage, 'dev'}
 
   region: us-east-1
+
+  environment:
+    PURCHASE_REQUESTS_TABLE: PurchaseRequests-${self:provider.stage}
+    APPROVALS_TABLE: Approvals-${self:provider.stage}
+    S3_BUCKET_NAME: purchase-evidence-bucket-${self:provider.stage}
+    NODE_ENV: ${self:provider.stage}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
+        - dynamodb:Query
+      Resource:
+        - arn:aws:dynamodb:${self:provider.region}:*:table/PurchaseRequests-${self:provider.stage}
+        - arn:aws:dynamodb:${self:provider.region}:*:table/PurchaseRequests-${self:provider.stage}/index/*
+        - arn:aws:dynamodb:${self:provider.region}:*:table/Approvals-${self:provider.stage}
+        - arn:aws:dynamodb:${self:provider.region}:*:table/Approvals-${self:provider.stage}/index/*
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource:
+        - arn:aws:s3:::purchase-evidence-bucket-${self:provider.stage}/*
 
 package:
   individually: true
@@ -27,4 +55,71 @@ custom:
     format: cjs
     keepNames: true
 
+  serverless-offline:
+    httpPort: 3000
+    lambdaHandler: handler
+    noPrependStageInUrl: true
+
+  dynamodb:
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+      seed: false
+    stages:
+      - dev
+
 functions: ${file(serverless/functions.yml)}
+
+resources:
+  Resources:
+    PurchaseRequestsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: PurchaseRequests-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    ApprovalsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Approvals-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: purchaseRequestId
+            AttributeType: S
+          - AttributeName: approvalToken
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: PurchaseRequestIndex
+            KeySchema:
+              - AttributeName: purchaseRequestId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+          - IndexName: ApprovalTokenIndex
+            KeySchema:
+              - AttributeName: approvalToken
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+
+    EvidenceBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: purchase-evidence-bucket-${self:provider.stage}
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          BlockPublicAccess: true
+          IgnorePublicAcls: true

@@ -35,7 +35,7 @@ describe("CreatePurchaseRequestUseCase", () => {
           },
         },
       ]),
-      updateStatus: jest.fn(),
+      update: jest.fn(),
       findByApprovalToken: jest.fn(),
     };
 

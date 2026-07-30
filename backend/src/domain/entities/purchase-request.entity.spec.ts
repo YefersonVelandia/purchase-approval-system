@@ -29,12 +29,12 @@ describe("PurchaseRequest entity", () => {
       createdAt: new Date(),
     });
 
-  it("should allow PENDING to SIGNED transition", () => {
+  it("should allow PENDING to COMPLETED transition", () => {
     const request = createRequest(PurchaseRequestStatus.PENDING);
 
-    const updated = request.changeStatus(PurchaseRequestStatus.SIGNED);
+    const updated = request.changeStatus(PurchaseRequestStatus.COMPLETED);
 
-    expect(updated.data.status).toBe(PurchaseRequestStatus.SIGNED);
+    expect(updated.data.status).toBe(PurchaseRequestStatus.COMPLETED);
   });
 
   it("should allow PENDING to REJECTED transition", () => {

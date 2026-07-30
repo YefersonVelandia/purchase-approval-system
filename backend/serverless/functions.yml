@@ -72,3 +72,17 @@ validateApprovalOtp:
     - httpApi:
         path: /approvals/{token}/validate-otp
         method: post
+
+mockMail:
+  handler: src/adapters/handlers/mock-mail.handler.handler
+  events:
+    - httpApi:
+        path: /mock-mail
+        method: get
+
+downloadEvidence:
+  handler: src/adapters/handlers/download-evidence.handler.handler
+  events:
+    - httpApi:
+        path: /api/solicitudes/{id}/evidencia.pdf
+        method: get
