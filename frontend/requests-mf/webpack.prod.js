@@ -3,14 +3,14 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
 
-const MF_BASE_URL = process.env.MF_BASE_URL || "http://localhost:3002";
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3002";
 
 module.exports = {
   mode: "production",
   entry: "./src/index",
   output: {
     path: path.resolve(__dirname, "dist"),
-    publicPath: `${MF_BASE_URL}/requests-mf/`,
+    publicPath: `${FRONTEND_URL}/requests-mf/`,
     filename: "[name].[contenthash:8].js",
     clean: true,
   },
@@ -33,7 +33,7 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       "process.env.API_BASE_URL": JSON.stringify(
-        process.env.API_BASE_URL || "http://localhost:3000",
+        process.env.API_BASE_URL || "https://535r7zd2y8.execute-api.us-east-1.amazonaws.com",
       ),
     }),
     new ModuleFederationPlugin({
