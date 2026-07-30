@@ -3,9 +3,11 @@ import type { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2 } from "
 import { DynamoDBApprovalRepository } from "../../infrastructure/repositories/dynamodb-approval.repository";
 
 import { UpdateApprovalStatusUseCase } from "../../application/use-cases/update-approval-status.use-case";
+import { GenerateEvidencePdfUseCase } from "../../application/use-cases/generate-evidence-pdf.use-case";
 
 import { ApprovalStatus } from "../../domain/entities/approval.entity";
 import { DynamoDBPurchaseRequestRepository } from "../../infrastructure/repositories/dynamodb-purchase-request.repository";
+import { getStorageRepository } from "../../infrastructure/storage/storage.factory";
 
 export const handler = async (
   event: APIGatewayProxyEventV2,
@@ -28,7 +30,19 @@ export const handler = async (
 
     const purchaseRequestRepository = new DynamoDBPurchaseRequestRepository();
 
-    const useCase = new UpdateApprovalStatusUseCase(approvalRepository, purchaseRequestRepository);
+    const storageRepository = getStorageRepository();
+
+    const evidencePdfUseCase = new GenerateEvidencePdfUseCase(
+      purchaseRequestRepository,
+      approvalRepository,
+      storageRepository,
+    );
+
+    const useCase = new UpdateApprovalStatusUseCase(
+      approvalRepository,
+      purchaseRequestRepository,
+      evidencePdfUseCase,
+    );
 
     const result = await useCase.execute({
       id,
