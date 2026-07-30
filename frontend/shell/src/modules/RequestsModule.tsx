@@ -1,13 +1,7 @@
 import React from "react";
 
-const RequestsApp = React.lazy(() => import("requests-mf/RequestsApp"));
-
 const RequestsModule: React.FC = () => {
-  return (
-    <React.Suspense fallback={<div>Loading requests...</div>}>
-      <RequestsApp />
-    </React.Suspense>
-  );
+  return <div>Requests Microfrontend pendiente de implementación</div>;
 };
 
 export default RequestsModule;
