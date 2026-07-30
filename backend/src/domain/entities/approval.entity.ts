@@ -10,6 +10,8 @@ export interface ApprovalProps {
   approverId: string;
   approvalToken: string;
   status: ApprovalStatus;
+  otpCode?: string;
+  otpExpiresAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -50,6 +52,23 @@ export class Approval {
       status,
       updatedAt: new Date(),
     });
+  }
+
+  generateOtp(otpCode: string, otpExpiresAt: Date): Approval {
+    return new Approval({
+      ...this.props,
+      otpCode,
+      otpExpiresAt,
+      updatedAt: new Date(),
+    });
+  }
+
+  isOtpValid(code: string): boolean {
+    if (!this.props.otpCode || !this.props.otpExpiresAt) {
+      return false;
+    }
+
+    return this.props.otpCode === code && this.props.otpExpiresAt.getTime() > Date.now();
   }
 
   get id(): string {

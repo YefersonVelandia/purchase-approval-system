@@ -75,22 +75,56 @@ export class DynamoDBApprovalRepository implements ApprovalRepository {
     );
   }
 
-  async updateStatus(id: string, approval: Approval): Promise<void> {
+  async update(approval: Approval): Promise<void> {
     await dynamoDBClient.send(
       new UpdateCommand({
         TableName: this.tableName,
         Key: {
-          id,
+          id: approval.id,
         },
-        UpdateExpression: "SET #status = :status, updatedAt = :updatedAt",
+        UpdateExpression:
+          "SET otpCode = :otpCode, otpExpiresAt = :otpExpiresAt, updatedAt = :updatedAt, #status = :status",
         ExpressionAttributeNames: {
           "#status": "status",
         },
         ExpressionAttributeValues: {
-          ":status": approval.data.status,
+          ":otpCode": approval.data.otpCode,
+          ":otpExpiresAt": approval.data.otpExpiresAt?.toISOString(),
           ":updatedAt": approval.data.updatedAt.toISOString(),
+          ":status": approval.data.status,
         },
       }),
     );
+  }
+
+  async findByApprovalToken(token: string): Promise<Approval | null> {
+    const result = await dynamoDBClient.send(
+      new QueryCommand({
+        TableName: this.tableName,
+        IndexName: "ApprovalTokenIndex",
+        KeyConditionExpression: "approvalToken = :approvalToken",
+        ExpressionAttributeValues: {
+          ":approvalToken": token,
+        },
+      }),
+    );
+
+    const item = result.Items?.[0];
+
+    if (!item) {
+      return null;
+    }
+
+    return Approval.create({
+      id: item.id,
+      purchaseRequestId: item.purchaseRequestId,
+      approverId: item.approverId,
+      approvalToken: item.approvalToken,
+      otpCode: item.otpCode,
+      otpExpiresAt: item.otpExpiresAt ? new Date(item.otpExpiresAt) : undefined,
+      status: item.status as ApprovalStatus,
+      createdAt: new Date(item.createdAt),
+      updatedAt: new Date(item.updatedAt),
+    });
   }
 }

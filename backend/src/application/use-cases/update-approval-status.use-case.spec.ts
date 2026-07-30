@@ -55,6 +55,7 @@ describe("UpdateApprovalStatusUseCase", () => {
       findById: jest.fn().mockResolvedValue(approval),
       findByPurchaseRequestId: jest.fn().mockResolvedValue([approval]),
       updateStatus: jest.fn(),
+      findByApprovalToken: jest.fn(),
     };
 
     const purchaseRequestRepository: PurchaseRequestRepository = {
@@ -84,6 +85,7 @@ describe("UpdateApprovalStatusUseCase", () => {
       findById: jest.fn().mockResolvedValue(null),
       findByPurchaseRequestId: jest.fn(),
       updateStatus: jest.fn(),
+      findByApprovalToken: jest.fn(),
     };
 
     const purchaseRequestRepository: PurchaseRequestRepository = {
@@ -119,6 +121,7 @@ describe("UpdateApprovalStatusUseCase", () => {
       findById: jest.fn().mockResolvedValue(approval),
       findByPurchaseRequestId: jest.fn().mockResolvedValue([approval]),
       updateStatus: jest.fn(),
+      findByApprovalToken: jest.fn(),
     };
 
     const purchaseRequestRepository: PurchaseRequestRepository = {

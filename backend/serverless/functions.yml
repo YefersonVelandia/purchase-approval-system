@@ -58,3 +58,17 @@ updateApprovalStatus:
         path: /approvals/{id}
         method: patch
   name: purchase-approval-system-dev-updateApprovalStatus
+
+generateApprovalOtp:
+  handler: src/adapters/handlers/generate-approval-otp.handler.handler
+  events:
+    - httpApi:
+        path: /approvals/{token}/otp
+        method: get
+
+validateApprovalOtp:
+  handler: src/adapters/handlers/validate-approval-otp.handler.handler
+  events:
+    - httpApi:
+        path: /approvals/{token}/validate-otp
+        method: post

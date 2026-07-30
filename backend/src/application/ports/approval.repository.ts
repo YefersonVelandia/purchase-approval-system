@@ -7,5 +7,7 @@ export interface ApprovalRepository {
 
   findByPurchaseRequestId(purchaseRequestId: string): Promise<Approval[]>;
 
-  updateStatus(id: string, approval: Approval): Promise<void>;
+  findByApprovalToken(token: string): Promise<Approval | null>;
+
+  update(approval: Approval): Promise<void>;
 }
