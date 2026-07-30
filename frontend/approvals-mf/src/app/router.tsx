@@ -11,7 +11,7 @@ const AppRouter: React.FC = () => (
     <Route path="/approve/otp" element={<OtpValidationPage />} />
     <Route path="/approve/detail" element={<ApprovalDetailPage />} />
     <Route path="/approve/result" element={<ApprovalResultPage />} />
-    <Route path="*" element={<Navigate to="approve" replace />} />
+    <Route path="*" element={<Navigate to="/approvals/approve" replace />} />
   </Routes>
 );
 

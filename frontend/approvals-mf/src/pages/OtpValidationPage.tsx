@@ -9,7 +9,8 @@ const OtpValidationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const expiresAt = searchParams.get("expiresAt");
   const otpCode = searchParams.get("otpCode");
-  const { state, setApprovalId, setApproverId } = useApprovalFlow();
+  const solicitudIdFromUrl = searchParams.get("solicitud_id");
+  const { state, setApprovalId, setApproverId, setSolicitudId } = useApprovalFlow();
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (otpCode: string) => {
@@ -22,8 +23,9 @@ const OtpValidationPage: React.FC = () => {
       const res = await approvalService.validateOtp(state.approverToken, otpCode);
       setApprovalId(res.approvalId);
       setApproverId(res.approverId);
-      const detailSearch = state.solicitudId ? `?solicitud_id=${encodeURIComponent(state.solicitudId)}` : "";
-      navigate(`detail${detailSearch}`, { replace: true });
+      const id = state.solicitudId || solicitudIdFromUrl || "";
+      if (id) setSolicitudId(id);
+      navigate(`/approvals/approve/detail?solicitud_id=${encodeURIComponent(id)}`, { replace: true });
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
         const axiosErr = err as { response?: { status?: number } };

@@ -26,7 +26,7 @@ const ApprovalEntryPage: React.FC = () => {
       .then((res) => {
         setApprovalId(res.approvalId);
         setApproverId(res.approvalId);
-        navigate(`otp?expiresAt=${encodeURIComponent(res.otpExpiresAt)}&otpCode=${encodeURIComponent(res.otpCode)}`, {
+        navigate(`/approvals/approve/otp?solicitud_id=${encodeURIComponent(solicitudId)}&expiresAt=${encodeURIComponent(res.otpExpiresAt)}&otpCode=${encodeURIComponent(res.otpCode)}`, {
           replace: true,
         });
       })

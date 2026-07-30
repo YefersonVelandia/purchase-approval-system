@@ -12,11 +12,12 @@ const ApprovalDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const solicitudId = state.solicitudId || searchParams.get("solicitud_id");
+  const solicitudId = searchParams.get("solicitud_id") || state.solicitudId;
 
   useEffect(() => {
     if (!solicitudId) {
-      navigate("..", { replace: true });
+      setError("Solicitud no encontrada. Vuelve a iniciar desde la bandeja de aprobaciones.");
+      setLoading(false);
       return;
     }
     if (!state.solicitudId) {
@@ -37,14 +38,14 @@ const ApprovalDetailPage: React.FC = () => {
     if (!state.approvalId) return;
     await approvalService.updateApprovalStatus(state.approvalId, "APPROVED", signedBy);
     setResult({ status: "APPROVED", signedBy });
-    navigate("result", { replace: true });
+    navigate("/approvals/approve/result", { replace: true });
   };
 
   const handleReject = async (signedBy: string) => {
     if (!state.approvalId) return;
     await approvalService.updateApprovalStatus(state.approvalId, "REJECTED", signedBy);
     setResult({ status: "REJECTED", signedBy });
-    navigate("result", { replace: true });
+    navigate("/approvals/approve/result", { replace: true });
   };
 
   if (loading) return <div className="page-status">Cargando detalle de la solicitud...</div>;
