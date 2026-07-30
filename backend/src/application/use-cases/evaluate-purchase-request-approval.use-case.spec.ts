@@ -3,6 +3,7 @@ import { Approval, ApprovalStatus } from "../../domain/entities/approval.entity"
 import {
   PurchaseRequest,
   PurchaseRequestStatus,
+  ApproverRole,
 } from "../../domain/entities/purchase-request.entity";
 
 import { EvaluatePurchaseRequestApprovalUseCase } from "./evaluate-purchase-request-approval.use-case";
@@ -17,6 +18,11 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
     description: "Developer laptop",
     amount: 1500,
     requesterId: "user-123",
+    approvers: [
+      { name: "Juan Perez", email: "manager-1", role: ApproverRole.MANAGER },
+      { name: "Maria Gomez", email: "manager-2", role: ApproverRole.FINANCE },
+      { name: "Carlos Ruiz", email: "manager-3", role: ApproverRole.LEGAL },
+    ],
     status: PurchaseRequestStatus.PENDING,
     createdAt: new Date(),
   });
@@ -27,6 +33,7 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
         id: "approval-1",
         purchaseRequestId: "request-123",
         approverId: "manager-1",
+        approvalToken: "token-1",
         status: ApprovalStatus.APPROVED,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -35,6 +42,16 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
         id: "approval-2",
         purchaseRequestId: "request-123",
         approverId: "manager-2",
+        approvalToken: "token-2",
+        status: ApprovalStatus.APPROVED,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
+      Approval.create({
+        id: "approval-3",
+        purchaseRequestId: "request-123",
+        approverId: "manager-3",
+        approvalToken: "token-3",
         status: ApprovalStatus.APPROVED,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -75,6 +92,7 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
         id: "approval-1",
         purchaseRequestId: "request-123",
         approverId: "manager-1",
+        approvalToken: "token-1",
         status: ApprovalStatus.APPROVED,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -83,7 +101,17 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
         id: "approval-2",
         purchaseRequestId: "request-123",
         approverId: "manager-2",
+        approvalToken: "token-2",
         status: ApprovalStatus.REJECTED,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
+      Approval.create({
+        id: "approval-3",
+        purchaseRequestId: "request-123",
+        approverId: "manager-3",
+        approvalToken: "token-3",
+        status: ApprovalStatus.APPROVED,
         createdAt: new Date(),
         updatedAt: new Date(),
       }),
@@ -121,6 +149,7 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
         id: "approval-1",
         purchaseRequestId: "request-123",
         approverId: "manager-1",
+        approvalToken: "token-1",
         status: ApprovalStatus.PENDING,
         createdAt: new Date(),
         updatedAt: new Date(),

@@ -17,6 +17,7 @@ export class CreateApprovalUseCase {
       id: randomUUID(),
       purchaseRequestId: input.purchaseRequestId,
       approverId: input.approverId,
+      approvalToken: randomUUID(),
       status: ApprovalStatus.PENDING,
       createdAt: new Date(),
       updatedAt: new Date(),
