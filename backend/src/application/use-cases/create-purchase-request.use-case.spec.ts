@@ -15,11 +15,38 @@ describe("CreatePurchaseRequestUseCase", () => {
     const approvalRepository: ApprovalRepository = {
       save: jest.fn(),
       findById: jest.fn(),
-      findByPurchaseRequestId: jest.fn(),
+      findByPurchaseRequestId: jest.fn().mockResolvedValue([
+        {
+          data: {
+            approverId: "juan@empresa.com",
+            approvalToken: "token-juan",
+          },
+        },
+        {
+          data: {
+            approverId: "maria@empresa.com",
+            approvalToken: "token-maria",
+          },
+        },
+        {
+          data: {
+            approverId: "carlos@empresa.com",
+            approvalToken: "token-carlos",
+          },
+        },
+      ]),
       updateStatus: jest.fn(),
     };
 
-    const useCase = new CreatePurchaseRequestUseCase(purchaseRequestRepository, approvalRepository);
+    const notificationRepository = {
+      send: jest.fn(),
+    };
+
+    const useCase = new CreatePurchaseRequestUseCase(
+      purchaseRequestRepository,
+      approvalRepository,
+      notificationRepository,
+    );
 
     const result = await useCase.execute({
       title: "Laptop",
@@ -50,5 +77,7 @@ describe("CreatePurchaseRequestUseCase", () => {
     expect(purchaseRequestRepository.save).toHaveBeenCalledTimes(1);
 
     expect(approvalRepository.save).toHaveBeenCalledTimes(3);
+
+    expect(notificationRepository.send).toHaveBeenCalledTimes(3);
   });
 });

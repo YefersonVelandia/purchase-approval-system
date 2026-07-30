@@ -10,15 +10,24 @@ import { ApprovalRepository } from "../ports/approval.repository";
 
 import { CreatePurchaseRequestDto } from "../dto/create-purchase-request.dto";
 import { ApprovalWorkflowService } from "../services/approval-workflow.service";
+import { ApprovalNotificationService } from "../services/approval-notification.service";
+import { NotificationRepository } from "../ports/notification.repository";
 
 export class CreatePurchaseRequestUseCase {
   private readonly approvalWorkflowService: ApprovalWorkflowService;
+  private readonly approvalNotificationService: ApprovalNotificationService;
 
   constructor(
     private readonly purchaseRequestRepository: PurchaseRequestRepository,
     private readonly approvalRepository: ApprovalRepository,
+    notificationRepository: NotificationRepository,
   ) {
     this.approvalWorkflowService = new ApprovalWorkflowService(this.approvalRepository);
+
+    this.approvalNotificationService = new ApprovalNotificationService(
+      this.approvalRepository,
+      notificationRepository,
+    );
   }
 
   async execute(input: CreatePurchaseRequestDto): Promise<PurchaseRequest> {
@@ -36,6 +45,8 @@ export class CreatePurchaseRequestUseCase {
     await this.purchaseRequestRepository.save(purchaseRequest);
 
     await this.approvalWorkflowService.initialize(purchaseRequest);
+
+    await this.approvalNotificationService.notify(purchaseRequest);
 
     return purchaseRequest;
   }
