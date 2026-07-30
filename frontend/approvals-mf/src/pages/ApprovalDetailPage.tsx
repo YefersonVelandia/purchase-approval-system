@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import ApprovalDetail from "../components/ApprovalDetail";
 import ApprovalActions from "../components/ApprovalActions";
 import { useApprovalFlow } from "../app/ApprovalContext";
@@ -7,17 +7,23 @@ import { approvalService } from "../services/approval.service";
 
 const ApprovalDetailPage: React.FC = () => {
   const navigate = useNavigate();
-  const { state, setPurchaseRequest, setResult } = useApprovalFlow();
+  const [searchParams] = useSearchParams();
+  const { state, setSolicitudId, setPurchaseRequest, setResult } = useApprovalFlow();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const solicitudId = state.solicitudId || searchParams.get("solicitud_id");
+
   useEffect(() => {
-    if (!state.solicitudId) {
+    if (!solicitudId) {
       navigate("..", { replace: true });
       return;
     }
+    if (!state.solicitudId) {
+      setSolicitudId(solicitudId);
+    }
     approvalService
-      .getPurchaseRequest(state.solicitudId)
+      .getPurchaseRequest(solicitudId)
       .then((req) => {
         setPurchaseRequest(req);
       })
@@ -25,7 +31,7 @@ const ApprovalDetailPage: React.FC = () => {
         setError("Error al cargar el detalle de la solicitud.");
       })
       .finally(() => setLoading(false));
-  }, [state.solicitudId, navigate, setPurchaseRequest]);
+  }, [solicitudId, state.solicitudId, navigate, setSolicitudId, setPurchaseRequest]);
 
   const handleApprove = async (signedBy: string) => {
     if (!state.approvalId) return;

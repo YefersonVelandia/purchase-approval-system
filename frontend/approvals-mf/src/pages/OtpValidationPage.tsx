@@ -22,7 +22,8 @@ const OtpValidationPage: React.FC = () => {
       const res = await approvalService.validateOtp(state.approverToken, otpCode);
       setApprovalId(res.approvalId);
       setApproverId(res.approverId);
-      navigate("detail", { replace: true });
+      const detailSearch = state.solicitudId ? `?solicitud_id=${encodeURIComponent(state.solicitudId)}` : "";
+      navigate(`detail${detailSearch}`, { replace: true });
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
         const axiosErr = err as { response?: { status?: number } };
