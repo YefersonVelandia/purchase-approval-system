@@ -5,9 +5,10 @@ interface OtpFormProps {
   loading?: boolean;
   error?: string | null;
   expiresAt?: string | null;
+  mockCode?: string | null;
 }
 
-const OtpForm: React.FC<OtpFormProps> = ({ onSubmit, loading, error, expiresAt }) => {
+const OtpForm: React.FC<OtpFormProps> = ({ onSubmit, loading, error, expiresAt, mockCode }) => {
   const [otp, setOtp] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -26,6 +27,12 @@ const OtpForm: React.FC<OtpFormProps> = ({ onSubmit, loading, error, expiresAt }
           </span>
         )}
       </p>
+
+      {mockCode && (
+        <div className="mock-otp-code">
+          Código de prueba: <strong>{mockCode}</strong>
+        </div>
+      )}
 
       {error && <div className="form-error">{error}</div>}
 

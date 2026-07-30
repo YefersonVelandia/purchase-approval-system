@@ -8,6 +8,7 @@ const OtpValidationPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const expiresAt = searchParams.get("expiresAt");
+  const otpCode = searchParams.get("otpCode");
   const { state, setApprovalId, setApproverId } = useApprovalFlow();
   const [error, setError] = useState<string | null>(null);
 
@@ -37,7 +38,7 @@ const OtpValidationPage: React.FC = () => {
   };
 
   return (
-    <OtpForm onSubmit={handleSubmit} error={error} expiresAt={expiresAt} />
+    <OtpForm onSubmit={handleSubmit} error={error} expiresAt={expiresAt} mockCode={otpCode} />
   );
 };
 

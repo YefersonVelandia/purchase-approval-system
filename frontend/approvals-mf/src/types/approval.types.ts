@@ -36,6 +36,7 @@ export interface Approval {
 export interface OtpResponse {
   message: string;
   approvalId: string;
+  otpCode: string;
   otpExpiresAt: string;
 }
 

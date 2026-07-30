@@ -1,0 +1,23 @@
+[
+  {
+    "to": "j@j.com",
+    "subject": "Solicitud de compra pendiente de aprobación",
+    "body": "\n          Tienes una solicitud pendiente de aprobación.\n\n          Solicitud:\n          test\n\n          Descripción:\n          tes\n\n          Link de aprobación:\n          http://localhost:3001/approvals/approve?solicitud_id=d7b13919-2b1a-47a3-ab0e-7a6e121de965&approver_token=f7db6e53-7413-4eeb-ad21-3bf2a1a01ddc\n        ",
+    "url": "http://localhost:3001/approvals/approve?solicitud_id=d7b13919-2b1a-47a3-ab0e-7a6e121de965&approver_token=f7db6e53-7413-4eeb-ad21-3bf2a1a01ddc",
+    "sentAt": "2026-07-30T15:01:29.235Z"
+  },
+  {
+    "to": "p@p.com",
+    "subject": "Solicitud de compra pendiente de aprobación",
+    "body": "\n          Tienes una solicitud pendiente de aprobación.\n\n          Solicitud:\n          test\n\n          Descripción:\n          tes\n\n          Link de aprobación:\n          http://localhost:3001/approvals/approve?solicitud_id=d7b13919-2b1a-47a3-ab0e-7a6e121de965&approver_token=9c346abf-c7ee-4a73-94f2-cde98eed97a4\n        ",
+    "url": "http://localhost:3001/approvals/approve?solicitud_id=d7b13919-2b1a-47a3-ab0e-7a6e121de965&approver_token=9c346abf-c7ee-4a73-94f2-cde98eed97a4",
+    "sentAt": "2026-07-30T15:01:29.237Z"
+  },
+  {
+    "to": "m@m.com",
+    "subject": "Solicitud de compra pendiente de aprobación",
+    "body": "\n          Tienes una solicitud pendiente de aprobación.\n\n          Solicitud:\n          test\n\n          Descripción:\n          tes\n\n          Link de aprobación:\n          http://localhost:3001/approvals/approve?solicitud_id=d7b13919-2b1a-47a3-ab0e-7a6e121de965&approver_token=319de177-bdbc-44fc-a003-73b4e5599402\n        ",
+    "url": "http://localhost:3001/approvals/approve?solicitud_id=d7b13919-2b1a-47a3-ab0e-7a6e121de965&approver_token=319de177-bdbc-44fc-a003-73b4e5599402",
+    "sentAt": "2026-07-30T15:01:29.255Z"
+  }
+]
