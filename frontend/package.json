@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r build",
+    "build:production": "pnpm --filter shell build:production && pnpm --filter requests-mf build:production && pnpm --filter approvals-mf build:production",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test"
   },
