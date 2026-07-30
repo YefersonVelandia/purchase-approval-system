@@ -13,7 +13,7 @@ const ApprovalDetailPage: React.FC = () => {
 
   useEffect(() => {
     if (!state.solicitudId) {
-      navigate("/approve", { replace: true });
+      navigate("..", { replace: true });
       return;
     }
     approvalService
@@ -31,14 +31,14 @@ const ApprovalDetailPage: React.FC = () => {
     if (!state.approvalId) return;
     await approvalService.updateApprovalStatus(state.approvalId, "APPROVED", signedBy);
     setResult({ status: "APPROVED", signedBy });
-    navigate("/approve/result", { replace: true });
+    navigate("result", { replace: true });
   };
 
   const handleReject = async (signedBy: string) => {
     if (!state.approvalId) return;
     await approvalService.updateApprovalStatus(state.approvalId, "REJECTED", signedBy);
     setResult({ status: "REJECTED", signedBy });
-    navigate("/approve/result", { replace: true });
+    navigate("result", { replace: true });
   };
 
   if (loading) return <div className="page-status">Cargando detalle de la solicitud...</div>;
