@@ -2,6 +2,14 @@
 
 Sistema de flujo de aprobación de solicitudes de compra con firma digital concatenada.
 
+## Despliegue en producción
+
+| Recurso | URL |
+|---|---|
+| **Frontend** | http://purchase-approval-ui-594954690298.s3-website-us-east-1.amazonaws.com/shell/ |
+| **API Gateway** | https://dwkfygacfa.execute-api.us-east-1.amazonaws.com |
+| **Health Check** | https://dwkfygacfa.execute-api.us-east-1.amazonaws.com/health |
+
 ## Descripción
 
 El sistema resuelve el problema de gestionar el ciclo de vida completo de aprobación de compras empresariales. Un solicitante crea una solicitud que debe ser aprobada por 3 aprobadores con roles específicos (Gerente, Finanzas, Legal). Cada aprobador recibe un link único con token, valida su identidad mediante OTP, y procede a firmar digitalmente (aprobar o rechazar). Cuando los 3 aprobadores firman, se genera automáticamente un PDF de evidencia con todas las firmas concatenadas.
@@ -402,7 +410,13 @@ pnpm test
 - Node.js >= 20
 - pnpm
 
-### Backend (Serverless)
+El despliegue completo requiere **dos etapas**: backend primero, luego frontend.
+
+---
+
+### 1. Backend (Serverless Framework)
+
+El backend se despliega con Serverless Framework. Las funciones Lambda reciben las variables de entorno desde `serverless.yml`.
 
 ```bash
 cd backend
@@ -412,8 +426,26 @@ serverless deploy
 
 # Desplegar en producción
 serverless deploy --stage prod
+```
 
-# Desplegar función específica
+**Variable de entorno requerida:**
+
+| Variable | Propósito | Ejemplo (prod) |
+|---|---|---|
+| `APPROVAL_BASE_URL` | URL base para enlaces en correos de aprobación | `http://<bucket>.s3-website-us-east-1.amazonaws.com/shell/approvals` |
+
+Configurar antes de desplegar:
+
+```bash
+export APPROVAL_BASE_URL="http://purchase-approval-ui-123456789012.s3-website-us-east-1.amazonaws.com/shell/approvals"
+serverless deploy --stage prod
+```
+
+> El valor de `APPROVAL_BASE_URL` apunta al frontend (S3 Static Website). Se puede obtener después de desplegar el frontend y re-desplegar el backend.
+
+#### Desplegar función específica
+
+```bash
 serverless deploy function --function createPurchaseRequest
 ```
 
@@ -428,9 +460,23 @@ serverless deploy function --function createPurchaseRequest
 | S3 Bucket | Almacenamiento de PDFs de evidencia |
 | IAM Roles | Permisos mínimos necesarios |
 
-### Frontend (S3 Static Website)
+> Anotar la **URL del API Gateway** (`https://xxxx.execute-api.us-east-1.amazonaws.com`) del output — se necesita para el frontend.
 
-Después de desplegar el backend, obtener la URL del API Gateway del output (`https://xxxx.execute-api.us-east-1.amazonaws.com`).
+---
+
+### 2. Frontend (S3 Static Website)
+
+El frontend se despliega como un sitio estático en S3. Tres microfrontends independientes se compilan y suben a subdirectorios.
+
+**Requisito:** Tener la URL del API Gateway del paso anterior.
+
+#### Variables de entorno requeridas para el build
+
+| Variable | Propósito | Ejemplo |
+|---|---|---|
+| `API_BASE_URL` | URL base de la API backend | `https://xxxx.execute-api.us-east-1.amazonaws.com` |
+| `MF_BASE_URL` | URL base donde se alojan los MFs | `http://<bucket>.s3-website-us-east-1.amazonaws.com` |
+| `APPROVAL_BASE_URL` | Para enlaces de aprobación (backend) | `http://<bucket>.s3-website-us-east-1.amazonaws.com/shell/approvals` |
 
 #### Opción 1: Script automatizado (recomendado)
 
@@ -445,15 +491,23 @@ chmod +x deploy.sh
 .\deploy.ps1 -ApiBaseUrl "https://xxxx.execute-api.us-east-1.amazonaws.com"
 ```
 
+El script:
+1. Compila los 3 MFs con las URLs correctas
+2. Crea el bucket S3 (si no existe)
+3. Sube los assets compilados
+4. Habilita Static Website Hosting
+5. Configura bucket policy (público) y CORS
+
 #### Opción 2: Manual paso a paso
 
 ```bash
 cd frontend
 
 # 1. Build producción (inyectando URLs)
-MF_BASE_URL=http://purchase-approval-ui-<ACCOUNT_ID>.s3-website-us-east-1.amazonaws.com \
-  API_BASE_URL=https://xxxx.execute-api.us-east-1.amazonaws.com \
-  pnpm build:production
+export MF_BASE_URL=http://purchase-approval-ui-<ACCOUNT_ID>.s3-website-us-east-1.amazonaws.com
+export API_BASE_URL=https://xxxx.execute-api.us-east-1.amazonaws.com
+export APPROVAL_BASE_URL=${MF_BASE_URL}/shell/approvals
+pnpm build:production
 
 # 2. Crear bucket (un reemplazar <ACCOUNT_ID>)
 aws s3 mb s3://purchase-approval-ui-<ACCOUNT_ID> --region us-east-1
@@ -486,6 +540,53 @@ aws s3api put-bucket-cors --bucket purchase-approval-ui-<ACCOUNT_ID> \
 
 echo "Frontend URL: http://purchase-approval-ui-<ACCOUNT_ID>.s3-website-us-east-1.amazonaws.com/shell/"
 ```
+
+### 3. Post-deploy: Conectar frontend con backend
+
+Si el backend se desplegó primero (antes de conocer la URL del frontend), re-desplegarlo con la variable `APPROVAL_BASE_URL` correcta:
+
+```bash
+cd backend
+export APPROVAL_BASE_URL="http://purchase-approval-ui-<ACCOUNT_ID>.s3-website-us-east-1.amazonaws.com/shell/approvals"
+serverless deploy --stage prod
+```
+
+Esto actualiza la variable de entorno en todas las funciones Lambda sin cambios de infraestructura.
+
+### Flujo completo (desde cero)
+
+```bash
+# === 1. Backend ===
+cd backend
+export APPROVAL_BASE_URL="http://purchase-approval-ui-<ACCOUNT_ID>.s3-website-us-east-1.amazonaws.com/shell/approvals"
+serverless deploy --stage prod
+# Anotar API_BASE_URL del output
+
+# === 2. Frontend ===
+cd ../frontend
+export API_BASE_URL="https://xxxx.execute-api.us-east-1.amazonaws.com"
+export MF_BASE_URL="http://purchase-approval-ui-<ACCOUNT_ID>.s3-website-us-east-1.amazonaws.com"
+export APPROVAL_BASE_URL="${MF_BASE_URL}/shell/approvals"
+pnpm build:production
+
+# === 3. Upload + config S3 ===
+aws s3 mb s3://purchase-approval-ui-<ACCOUNT_ID> --region us-east-1
+aws s3 sync shell/dist/ s3://purchase-approval-ui-<ACCOUNT_ID>/shell/ --delete
+aws s3 sync requests-mf/dist/ s3://purchase-approval-ui-<ACCOUNT_ID>/requests-mf/ --delete
+aws s3 sync approvals-mf/dist/ s3://purchase-approval-ui-<ACCOUNT_ID>/approvals-mf/ --delete
+aws s3 website s3://purchase-approval-ui-<ACCOUNT_ID> \
+  --index-document shell/index.html --error-document shell/index.html
+aws s3api put-bucket-policy --bucket purchase-approval-ui-<ACCOUNT_ID> \
+  --policy '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::purchase-approval-ui-<ACCOUNT_ID>/*"}]}'
+aws s3api put-bucket-cors --bucket purchase-approval-ui-<ACCOUNT_ID> \
+  --cors-configuration '{"CORSRules":[{"AllowedOrigins":["*"],"AllowedMethods":["GET","HEAD"],"AllowedHeaders":["*"]}]}'
+
+echo "Frontend: http://purchase-approval-ui-<ACCOUNT_ID>.s3-website-us-east-1.amazonaws.com/shell/"
+echo "API: ${API_BASE_URL}"
+
+# === 4. (Opcional) Re-desplegar backend con APPROVAL_BASE_URL correcta ===
+cd ../backend
+serverless deploy --stage prod
 
 ### Notas de Free Tier (AWS)
 
@@ -521,3 +622,6 @@ aws s3 rb s3://purchase-approval-ui-<ACCOUNT_ID>
 | `DynamoDB Local no inicia` | Java no instalado | Verificar `java --version`. Instalar OpenJDK 11+ |
 | `Module Federation: ScriptExternalLoadError` | URLs de remotes incorrectas en producción | Verificar `MF_BASE_URL` apunta al bucket S3 correcto |
 | `Access Denied` en bucket S3 | Política de bucket no configurada | Ejecutar `aws s3api put-bucket-policy` |
+| Enlaces de aprobación apuntan a `localhost` en prod | `APPROVAL_BASE_URL` no configurada en Lambda | Re-desplegar backend con `export APPROVAL_BASE_URL=<frontend-url>/shell/approvals` |
+| `The CloudFormation template is invalid: Resource name must be non-empty` | Hardcoded `-dev-` en function names | Actualizado — usar `${self:provider.stage}` en `name:` |
+| Lambda timeout en descarga de PDF | Tiempo insuficiente | Verificar `timeout: 15` en la función `downloadEvidence` |

@@ -25,7 +25,7 @@ listPurchaseRequests:
     - httpApi:
         path: /purchase-requests
         method: get
-  name: purchase-approval-system-dev-listPurchaseRequests
+  name: purchase-approval-system-${self:provider.stage}-listPurchaseRequests
 
 updatePurchaseRequestStatus:
   handler: src/adapters/handlers/update-purchase-request-status.handler
@@ -33,7 +33,7 @@ updatePurchaseRequestStatus:
     - httpApi:
         path: /purchase-requests/{id}/status
         method: patch
-  name: purchase-approval-system-dev-updatePurchaseRequestStatus
+  name: purchase-approval-system-${self:provider.stage}-updatePurchaseRequestStatus
 
 createApproval:
   handler: src/adapters/handlers/create-approval.handler
@@ -41,7 +41,7 @@ createApproval:
     - httpApi:
         path: /purchase-requests/{id}/approvals
         method: post
-  name: purchase-approval-system-dev-createApproval
+  name: purchase-approval-system-${self:provider.stage}-createApproval
 
 listApprovals:
   handler: src/adapters/handlers/list-approvals.handler
@@ -49,7 +49,7 @@ listApprovals:
     - httpApi:
         path: /purchase-requests/{id}/approvals
         method: get
-  name: purchase-approval-system-dev-listApprovals
+  name: purchase-approval-system-${self:provider.stage}-listApprovals
 
 updateApprovalStatus:
   handler: src/adapters/handlers/update-approval-status.handler

@@ -10,9 +10,12 @@ BUCKET_NAME="${2:-purchase-approval-ui-$(aws sts get-caller-identity --query Acc
 REGION="${3:-us-east-1}"
 
 echo "=== Build Frontend (producción) ==="
-MF_BASE_URL="http://${BUCKET_NAME}.s3-website-${REGION}.amazonaws.com" \
+FRONTEND_URL="http://${BUCKET_NAME}.s3-website-${REGION}.amazonaws.com"
+MF_BASE_URL="${FRONTEND_URL}" \
   API_BASE_URL="${API_BASE_URL}" \
   pnpm build:production
+
+export APPROVAL_BASE_URL="${FRONTEND_URL}/shell/approvals"
 
 echo "=== Crear bucket S3 (si no existe) ==="
 aws s3 mb "s3://${BUCKET_NAME}" --region "${REGION}" 2>/dev/null || true

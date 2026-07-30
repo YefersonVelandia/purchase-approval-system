@@ -6,9 +6,9 @@ createPurchaseRequest:
         method: post
 
 getPurchaseRequest:
-  handler: src/adapters/handlers/get-purchase-request.handler.handler
+  handler: src/adapters/handlers/get-purchase-request.handler
   events:
     - httpApi:
         path: /purchase-requests/{id}
         method: get
-  name: purchase-approval-system-dev-getPurchaseRequest
+  name: purchase-approval-system-${self:provider.stage}-getPurchaseRequest

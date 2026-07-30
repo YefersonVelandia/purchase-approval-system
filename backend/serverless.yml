@@ -18,7 +18,7 @@ provider:
 
   timeout: 15
   memorySize: 256
-  logsRetentionInDays: 7
+  logRetentionInDays: 7
 
   tags:
     Project: PurchaseApprovalSystem
@@ -30,6 +30,7 @@ provider:
     APPROVALS_TABLE: Approvals-${self:provider.stage}
     S3_BUCKET_NAME: !Ref EvidenceBucket
     NODE_ENV: ${self:provider.stage}
+    APPROVAL_BASE_URL: ${env:APPROVAL_BASE_URL, 'http://localhost:3001/approvals'}
 
   iamRoleStatements:
     - Effect: Allow
@@ -136,5 +137,5 @@ resources:
         PublicAccessBlockConfiguration:
           BlockPublicAcls: true
           BlockPublicPolicy: true
-          BlockPublicAccess: true
           IgnorePublicAcls: true
+          RestrictPublicBuckets: true
