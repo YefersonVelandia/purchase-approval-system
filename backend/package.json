@@ -10,13 +10,15 @@
     "node": ">=20"
   },
   "scripts": {
+    "setup": "serverless dynamodb install",
     "dev": "serverless offline",
-    "build": "echo 'pending'",
+    "build": "echo 'Backend runs on Lambda - no build step needed'",
+    "build:dist": "echo 'Backend runs on Lambda - no build step needed'",
+    "deploy": "serverless deploy",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "lint": "eslint src",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "deploy": "serverless deploy"
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "3.1097.0",

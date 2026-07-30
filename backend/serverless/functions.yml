@@ -57,7 +57,8 @@ updateApprovalStatus:
     - httpApi:
         path: /approvals/{id}
         method: patch
-  name: purchase-approval-system-dev-updateApprovalStatus
+  timeout: 15
+  memorySize: 256
 
 generateApprovalOtp:
   handler: src/adapters/handlers/generate-approval-otp.handler
@@ -86,3 +87,5 @@ downloadEvidence:
     - httpApi:
         path: /api/solicitudes/{id}/evidencia.pdf
         method: get
+  timeout: 15
+  memorySize: 256
