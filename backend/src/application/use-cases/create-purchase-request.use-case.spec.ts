@@ -41,6 +41,8 @@ describe("CreatePurchaseRequestUseCase", () => {
 
     const notificationRepository = {
       send: jest.fn(),
+      list: jest.fn(),
+      clear: jest.fn(),
     };
 
     const useCase = new CreatePurchaseRequestUseCase(

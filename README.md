@@ -4,11 +4,11 @@ Sistema de flujo de aprobación de solicitudes de compra con firma digital conca
 
 ## Despliegue en producción
 
-| Recurso          | URL                                                                         |
-| ---------------- | --------------------------------------------------------------------------- |
-| **Frontend**     | http://purchase-approval-ui-594954690298.s3-website-us-east-1.amazonaws.com |
-| **API Gateway**  | https://dwkfygacfa.execute-api.us-east-1.amazonaws.com                      |
-| **Health Check** | https://dwkfygacfa.execute-api.us-east-1.amazonaws.com/health               |
+| Recurso          | URL                                                                           |
+| ---------------- | ----------------------------------------------------------------------------- |
+| **Frontend**     | http://purchase-approval-ui-594954690298.s3-website-us-east-1.amazonaws.com   |
+| **API Gateway**  | https://535r7zd2y8.execute-api.us-east-1.amazonaws.com                        |
+| **Health Check** | https://535r7zd2y8.execute-api.us-east-1.amazonaws.com/health                 |
 
 ## Descripción
 

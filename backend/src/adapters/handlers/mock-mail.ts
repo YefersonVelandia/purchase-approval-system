@@ -1,14 +1,21 @@
 import { APIGatewayProxyStructuredResultV2 } from "aws-lambda";
 
-import { MockEmailRepository } from "../../infrastructure/notifications/mock-email.repository";
+import { createMockEmailRepository } from "../../infrastructure/notifications/dynamodb-mock-email.repository";
 
 export const handler = async (): Promise<APIGatewayProxyStructuredResultV2> => {
   try {
-    const emails = MockEmailRepository.getEmails();
+    const notificationRepository = createMockEmailRepository();
+    const emails = await notificationRepository.list();
+
+    // Convert Date objects to ISO strings for JSON serialization
+    const serializedEmails = emails.map((email) => ({
+      ...email,
+      sentAt: email.sentAt instanceof Date ? email.sentAt.toISOString() : email.sentAt,
+    }));
 
     return {
       statusCode: 200,
-      body: JSON.stringify(emails),
+      body: JSON.stringify(serializedEmails),
     };
   } catch (error) {
     return {

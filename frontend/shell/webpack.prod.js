@@ -3,12 +3,13 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
 
-const MF_BASE_URL = process.env.MF_BASE_URL || "http://localhost:3001";
-const REQUESTS_MF_URL = process.env.REQUESTS_MF_URL || `${MF_BASE_URL}/requests-mf/remoteEntry.js`;
-const APPROVALS_MF_URL = process.env.APPROVALS_MF_URL || `${MF_BASE_URL}/approvals-mf/remoteEntry.js`;
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3001";
+const REQUESTS_MF_URL = process.env.REQUESTS_MF_URL || `${FRONTEND_URL}/requests-mf/remoteEntry.js`;
+const APPROVALS_MF_URL =
+  process.env.APPROVALS_MF_URL || `${FRONTEND_URL}/approvals-mf/remoteEntry.js`;
 
-if (!process.env.MF_BASE_URL && process.env.NODE_ENV === "production") {
-  console.warn("⚠️  MF_BASE_URL no definida. Usando fallback localhost. Las URLs remotas apuntarán a desarrollo.");
+if (!process.env.FRONTEND_URL && process.env.NODE_ENV === "production") {
+  console.warn("⚠️ FRONTEND_URL no definida. Usando fallback localhost.");
 }
 
 module.exports = {
@@ -16,7 +17,7 @@ module.exports = {
   entry: "./src/main",
   output: {
     path: path.resolve(__dirname, "dist"),
-    publicPath: `${MF_BASE_URL}/shell/`,
+    publicPath: `${FRONTEND_URL}/`,
     filename: "[name].[contenthash:8].js",
     clean: true,
     crossOriginLoading: "anonymous",
@@ -40,7 +41,7 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       "process.env.API_BASE_URL": JSON.stringify(
-        process.env.API_BASE_URL || "http://localhost:3000",
+        process.env.API_BASE_URL || "https://535r7zd2y8.execute-api.us-east-1.amazonaws.com",
       ),
     }),
     new ModuleFederationPlugin({

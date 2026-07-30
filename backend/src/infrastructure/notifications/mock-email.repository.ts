@@ -60,6 +60,14 @@ export class MockEmailRepository implements NotificationRepository {
     console.log("----------------");
   }
 
+  async list(): Promise<MockEmail[]> {
+    return loadEmails();
+  }
+
+  async clear(): Promise<void> {
+    saveEmails([]);
+  }
+
   static getEmails(): MockEmail[] {
     return loadEmails();
   }
