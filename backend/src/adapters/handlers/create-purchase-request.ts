@@ -6,14 +6,14 @@ import { CreatePurchaseRequestUseCase } from "../../application/use-cases/create
 import { DynamoDBPurchaseRequestRepository } from "../../infrastructure/repositories/dynamodb-purchase-request.repository";
 import { errorMiddleware } from "../middlewares/error.middleware";
 import { DynamoDBApprovalRepository } from "../../infrastructure/repositories/dynamodb-approval.repository";
-import { MockEmailRepository } from "../../infrastructure/notifications/mock-email.repository";
+import { createMockEmailRepository } from "../../infrastructure/notifications/dynamodb-mock-email.repository";
 
 const baseHandler = async (event: APIGatewayProxyEventV2) => {
   const purchaseRequestRepository = new DynamoDBPurchaseRequestRepository();
 
   const approvalRepository = new DynamoDBApprovalRepository();
 
-  const notificationRepository = new MockEmailRepository();
+  const notificationRepository = createMockEmailRepository();
 
   const useCase = new CreatePurchaseRequestUseCase(
     purchaseRequestRepository,
