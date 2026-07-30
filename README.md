@@ -4,11 +4,11 @@ Sistema de flujo de aprobación de solicitudes de compra con firma digital conca
 
 ## Despliegue en producción
 
-| Recurso | URL |
-|---|---|
-| **Frontend** | http://purchase-approval-ui-594954690298.s3-website-us-east-1.amazonaws.com/shell/ |
-| **API Gateway** | https://dwkfygacfa.execute-api.us-east-1.amazonaws.com |
-| **Health Check** | https://dwkfygacfa.execute-api.us-east-1.amazonaws.com/health |
+| Recurso          | URL                                                                         |
+| ---------------- | --------------------------------------------------------------------------- |
+| **Frontend**     | http://purchase-approval-ui-594954690298.s3-website-us-east-1.amazonaws.com |
+| **API Gateway**  | https://dwkfygacfa.execute-api.us-east-1.amazonaws.com                      |
+| **Health Check** | https://dwkfygacfa.execute-api.us-east-1.amazonaws.com/health               |
 
 ## Descripción
 
@@ -103,65 +103,65 @@ frontend/
 
 ### Backend
 
-| Tecnología | Versión | Uso |
-|---|---|---|
-| Node.js | >= 20 | Runtime |
-| TypeScript | 5.7 | Lenguaje |
-| Serverless Framework | 3.x | IaC y despliegue AWS |
-| AWS Lambda | Node.js 20 | Cómputo serverless |
-| DynamoDB | - | Base de datos NoSQL |
-| S3 | - | Almacenamiento PDF |
-| API Gateway V2 | HTTP API | Exposición REST |
-| pdfkit | 0.19 | Generación PDF |
-| Zod | 4.4 | Validación de schemas |
-| middy | 5.3 | Middleware Lambda |
-| esbuild | 0.24 | Bundling |
+| Tecnología           | Versión    | Uso                   |
+| -------------------- | ---------- | --------------------- |
+| Node.js              | >= 20      | Runtime               |
+| TypeScript           | 5.7        | Lenguaje              |
+| Serverless Framework | 3.x        | IaC y despliegue AWS  |
+| AWS Lambda           | Node.js 20 | Cómputo serverless    |
+| DynamoDB             | -          | Base de datos NoSQL   |
+| S3                   | -          | Almacenamiento PDF    |
+| API Gateway V2       | HTTP API   | Exposición REST       |
+| pdfkit               | 0.19       | Generación PDF        |
+| Zod                  | 4.4        | Validación de schemas |
+| middy                | 5.3        | Middleware Lambda     |
+| esbuild              | 0.24       | Bundling              |
 
 ### Frontend
 
-| Tecnología | Uso |
-|---|---|
-| React 18 | UI Framework |
-| TypeScript | Lenguaje |
+| Tecnología                    | Uso            |
+| ----------------------------- | -------------- |
+| React 18                      | UI Framework   |
+| TypeScript                    | Lenguaje       |
 | Webpack 5 + Module Federation | Microfrontends |
-| Tailwind CSS 3 | Estilos |
-| React Router DOM 6 | Navegación |
-| Axios | HTTP Client |
-| Jest + Testing Library | Tests |
+| Tailwind CSS 3                | Estilos        |
+| React Router DOM 6            | Navegación     |
+| Axios                         | HTTP Client    |
+| Jest + Testing Library        | Tests          |
 
 ## Endpoints API
 
 ### Solicitudes
 
-| Método | Path | Descripción |
-|---|---|---|
-| POST | `/purchase-requests` | Crear solicitud de compra |
-| GET | `/purchase-requests` | Listar solicitudes |
-| GET | `/purchase-requests/{id}` | Obtener detalle |
-| PATCH | `/purchase-requests/{id}/status` | Actualizar estado |
+| Método | Path                             | Descripción               |
+| ------ | -------------------------------- | ------------------------- |
+| POST   | `/purchase-requests`             | Crear solicitud de compra |
+| GET    | `/purchase-requests`             | Listar solicitudes        |
+| GET    | `/purchase-requests/{id}`        | Obtener detalle           |
+| PATCH  | `/purchase-requests/{id}/status` | Actualizar estado         |
 
 ### Aprobaciones
 
-| Método | Path | Descripción |
-|---|---|---|
-| POST | `/purchase-requests/{id}/approvals` | Crear aprobación |
-| GET | `/purchase-requests/{id}/approvals` | Listar aprobaciones |
-| PATCH | `/approvals/{id}` | Firmar (approve/reject) |
+| Método | Path                                | Descripción             |
+| ------ | ----------------------------------- | ----------------------- |
+| POST   | `/purchase-requests/{id}/approvals` | Crear aprobación        |
+| GET    | `/purchase-requests/{id}/approvals` | Listar aprobaciones     |
+| PATCH  | `/approvals/{id}`                   | Firmar (approve/reject) |
 
 ### OTP
 
-| Método | Path | Descripción |
-|---|---|---|
-| GET | `/approvals/{token}/otp` | Generar OTP |
-| POST | `/approvals/{token}/validate-otp` | Validar OTP |
+| Método | Path                              | Descripción |
+| ------ | --------------------------------- | ----------- |
+| GET    | `/approvals/{token}/otp`          | Generar OTP |
+| POST   | `/approvals/{token}/validate-otp` | Validar OTP |
 
 ### Otros
 
-| Método | Path | Descripción |
-|---|---|---|
-| GET | `/mock-mail` | Ver correos simulados |
-| GET | `/api/solicitudes/{id}/evidencia.pdf` | Descargar PDF |
-| GET | `/health` | Health check |
+| Método | Path                                  | Descripción           |
+| ------ | ------------------------------------- | --------------------- |
+| GET    | `/mock-mail`                          | Ver correos simulados |
+| GET    | `/api/solicitudes/{id}/evidencia.pdf` | Descargar PDF         |
+| GET    | `/health`                             | Health check          |
 
 ### Documentación Swagger
 
@@ -197,6 +197,7 @@ npm run dev                      # Terminal 2 - Puerto 3000
 > ⚠️ La **primera vez** que ejecutes `serverless dynamodb start`, puede tomar ~30s descargar e iniciar DynamoDB Local. Espera a que aparezca `[DynamoDB Local] Started` antes de iniciar el backend.
 
 Esto inicia:
+
 - API REST en `http://localhost:3000`
 - DynamoDB Local en `http://localhost:8000`
 
@@ -209,6 +210,7 @@ pnpm dev                           # Terminal 3
 ```
 
 Esto inicia:
+
 - Shell (Host) en `http://localhost:3001`
 - Requests MF en `http://localhost:3002`
 - Approvals MF en `http://localhost:3003`
@@ -265,51 +267,51 @@ cp frontend/shell/.env.example frontend/shell/.env
 
 ### Backend
 
-| Variable | Default | Descripción |
-|---|---|---|
-| `AWS_REGION` | `us-east-1` | Región AWS |
-| `PURCHASE_REQUESTS_TABLE` | `PurchaseRequests-dev` | Tabla DynamoDB de solicitudes |
-| `APPROVALS_TABLE` | `Approvals-dev` | Tabla DynamoDB de aprobaciones |
-| `S3_BUCKET_NAME` | `purchase-evidence-bucket-dev` | Bucket S3 para PDFs |
-| `NODE_ENV` | `dev` | Ambiente (dev/test usa mock storage) |
+| Variable                  | Default                        | Descripción                          |
+| ------------------------- | ------------------------------ | ------------------------------------ |
+| `AWS_REGION`              | `us-east-1`                    | Región AWS                           |
+| `PURCHASE_REQUESTS_TABLE` | `PurchaseRequests-dev`         | Tabla DynamoDB de solicitudes        |
+| `APPROVALS_TABLE`         | `Approvals-dev`                | Tabla DynamoDB de aprobaciones       |
+| `S3_BUCKET_NAME`          | `purchase-evidence-bucket-dev` | Bucket S3 para PDFs                  |
+| `NODE_ENV`                | `dev`                          | Ambiente (dev/test usa mock storage) |
 
 ### Frontend
 
-| Variable | Default | Descripción |
-|---|---|---|
+| Variable       | Default                 | Descripción        |
+| -------------- | ----------------------- | ------------------ |
 | `API_BASE_URL` | `http://localhost:3000` | URL base de la API |
 
 ## Modelo de datos
 
 ### DynamoDB: PurchaseRequests
 
-| Atributo | Tipo | Descripción |
-|---|---|---|
-| id (PK) | String (UUID) | Identificador único |
-| title | String | Título de la solicitud |
-| description | String | Descripción |
-| amount | Number | Monto |
-| requesterId | String | Email del solicitante |
-| approvers | Array | 3 aprobadores (name, email, role) |
-| status | String | PENDING / SIGNED / REJECTED / COMPLETED |
-| createdAt | String (ISO) | Fecha de creación |
-| evidenceUrl | String (opcional) | URL del PDF generado |
+| Atributo    | Tipo              | Descripción                             |
+| ----------- | ----------------- | --------------------------------------- |
+| id (PK)     | String (UUID)     | Identificador único                     |
+| title       | String            | Título de la solicitud                  |
+| description | String            | Descripción                             |
+| amount      | Number            | Monto                                   |
+| requesterId | String            | Email del solicitante                   |
+| approvers   | Array             | 3 aprobadores (name, email, role)       |
+| status      | String            | PENDING / SIGNED / REJECTED / COMPLETED |
+| createdAt   | String (ISO)      | Fecha de creación                       |
+| evidenceUrl | String (opcional) | URL del PDF generado                    |
 
 ### DynamoDB: Approvals
 
-| Atributo | Tipo | Descripción |
-|---|---|---|
-| id (PK) | String (UUID) | Identificador único |
-| purchaseRequestId (GSI PK) | String (UUID) | ID de la solicitud |
-| approverId | String | Email del aprobador |
-| approvalToken (GSI PK) | String (UUID) | Token para link de aprobación |
-| status | String | PENDING / APPROVED / REJECTED |
-| otpCode | String (opcional) | Código OTP generado |
-| otpExpiresAt | String (opcional) | Expiración del OTP |
-| createdAt | String (ISO) | Fecha de creación |
-| updatedAt | String (ISO) | Fecha de actualización |
-| signedAt | String (opcional) | Fecha de firma |
-| signedBy | String (opcional) | Nombre del firmante |
+| Atributo                   | Tipo              | Descripción                   |
+| -------------------------- | ----------------- | ----------------------------- |
+| id (PK)                    | String (UUID)     | Identificador único           |
+| purchaseRequestId (GSI PK) | String (UUID)     | ID de la solicitud            |
+| approverId                 | String            | Email del aprobador           |
+| approvalToken (GSI PK)     | String (UUID)     | Token para link de aprobación |
+| status                     | String            | PENDING / APPROVED / REJECTED |
+| otpCode                    | String (opcional) | Código OTP generado           |
+| otpExpiresAt               | String (opcional) | Expiración del OTP            |
+| createdAt                  | String (ISO)      | Fecha de creación             |
+| updatedAt                  | String (ISO)      | Fecha de actualización        |
+| signedAt                   | String (opcional) | Fecha de firma                |
+| signedBy                   | String (opcional) | Nombre del firmante           |
 
 ## Supuestos del sistema
 
@@ -347,15 +349,15 @@ cp frontend/shell/.env.example frontend/shell/.env
 
 ### Separación en capas
 
-| Capa | Responsabilidad |
-|---|---|
-| **Handlers** | Punto de entrada Lambda, parseo de evento API Gateway |
-| **Controllers** | Validación de input (Zod) y coordinación |
-| **Use Cases** | Orquestación de lógica de aplicación |
-| **Services** | Lógica reutilizable (OTP, notificaciones) |
-| **Entities** | Reglas de dominio y transiciones de estado |
-| **Repositories** | Persistencia DynamoDB |
-| **Storage** | Almacenamiento de PDFs |
+| Capa             | Responsabilidad                                       |
+| ---------------- | ----------------------------------------------------- |
+| **Handlers**     | Punto de entrada Lambda, parseo de evento API Gateway |
+| **Controllers**  | Validación de input (Zod) y coordinación              |
+| **Use Cases**    | Orquestación de lógica de aplicación                  |
+| **Services**     | Lógica reutilizable (OTP, notificaciones)             |
+| **Entities**     | Reglas de dominio y transiciones de estado            |
+| **Repositories** | Persistencia DynamoDB                                 |
+| **Storage**      | Almacenamiento de PDFs                                |
 
 ### Flujo de firma concatenada
 
@@ -384,13 +386,13 @@ pnpm lint          # ESLint
 
 **Casos probados**:
 
-| Capa | Casos |
-|---|---|
-| Domain | Transiciones de estado PurchaseRequest (PENDING->COMPLETED, PENDING->REJECTED, SIGNED->COMPLETED, inválidas) |
-| Domain | Transiciones Approval, validación OTP |
-| Services | Generación OTP (6 dígitos, expiración 3 min) |
-| Use Cases | Creación solicitud, evaluación aprobaciones, OTP, validación OTP, actualización estado |
-| Handlers | Health check |
+| Capa      | Casos                                                                                                        |
+| --------- | ------------------------------------------------------------------------------------------------------------ |
+| Domain    | Transiciones de estado PurchaseRequest (PENDING->COMPLETED, PENDING->REJECTED, SIGNED->COMPLETED, inválidas) |
+| Domain    | Transiciones Approval, validación OTP                                                                        |
+| Services  | Generación OTP (6 dígitos, expiración 3 min)                                                                 |
+| Use Cases | Creación solicitud, evaluación aprobaciones, OTP, validación OTP, actualización estado                       |
+| Handlers  | Health check                                                                                                 |
 
 ### Frontend
 
@@ -430,8 +432,8 @@ serverless deploy --stage prod
 
 **Variable de entorno requerida:**
 
-| Variable | Propósito | Ejemplo (prod) |
-|---|---|---|
+| Variable            | Propósito                                      | Ejemplo (prod)                                                       |
+| ------------------- | ---------------------------------------------- | -------------------------------------------------------------------- |
 | `APPROVAL_BASE_URL` | URL base para enlaces en correos de aprobación | `http://<bucket>.s3-website-us-east-1.amazonaws.com/shell/approvals` |
 
 Configurar antes de desplegar:
@@ -451,14 +453,14 @@ serverless deploy function --function createPurchaseRequest
 
 ### Recursos backend creados automáticamente
 
-| Recurso | Descripción |
-|---|---|
-| Lambda Functions (12) | Cada endpoint mapeado a una función |
-| API Gateway HTTP API | Endpoints REST expuestos |
-| DynamoDB PurchaseRequests | Tabla de solicitudes |
-| DynamoDB Approvals | Tabla de aprobaciones con GSIs |
-| S3 Bucket | Almacenamiento de PDFs de evidencia |
-| IAM Roles | Permisos mínimos necesarios |
+| Recurso                   | Descripción                         |
+| ------------------------- | ----------------------------------- |
+| Lambda Functions (12)     | Cada endpoint mapeado a una función |
+| API Gateway HTTP API      | Endpoints REST expuestos            |
+| DynamoDB PurchaseRequests | Tabla de solicitudes                |
+| DynamoDB Approvals        | Tabla de aprobaciones con GSIs      |
+| S3 Bucket                 | Almacenamiento de PDFs de evidencia |
+| IAM Roles                 | Permisos mínimos necesarios         |
 
 > Anotar la **URL del API Gateway** (`https://xxxx.execute-api.us-east-1.amazonaws.com`) del output — se necesita para el frontend.
 
@@ -472,10 +474,10 @@ El frontend se despliega como un sitio estático en S3. Tres microfrontends inde
 
 #### Variables de entorno requeridas para el build
 
-| Variable | Propósito | Ejemplo |
-|---|---|---|
-| `API_BASE_URL` | URL base de la API backend | `https://xxxx.execute-api.us-east-1.amazonaws.com` |
-| `MF_BASE_URL` | URL base donde se alojan los MFs | `http://<bucket>.s3-website-us-east-1.amazonaws.com` |
+| Variable            | Propósito                            | Ejemplo                                                              |
+| ------------------- | ------------------------------------ | -------------------------------------------------------------------- |
+| `API_BASE_URL`      | URL base de la API backend           | `https://xxxx.execute-api.us-east-1.amazonaws.com`                   |
+| `MF_BASE_URL`       | URL base donde se alojan los MFs     | `http://<bucket>.s3-website-us-east-1.amazonaws.com`                 |
 | `APPROVAL_BASE_URL` | Para enlaces de aprobación (backend) | `http://<bucket>.s3-website-us-east-1.amazonaws.com/shell/approvals` |
 
 #### Opción 1: Script automatizado (recomendado)
@@ -492,6 +494,7 @@ chmod +x deploy.sh
 ```
 
 El script:
+
 1. Compila los 3 MFs con las URLs correctas
 2. Crea el bucket S3 (si no existe)
 3. Sube los assets compilados
@@ -555,7 +558,7 @@ Esto actualiza la variable de entorno en todas las funciones Lambda sin cambios 
 
 ### Flujo completo (desde cero)
 
-```bash
+````bash
 # === 1. Backend ===
 cd backend
 export APPROVAL_BASE_URL="http://purchase-approval-ui-<ACCOUNT_ID>.s3-website-us-east-1.amazonaws.com/shell/approvals"
@@ -612,16 +615,16 @@ serverless remove
 # Frontend (vaciar y eliminar bucket)
 aws s3 rm s3://purchase-approval-ui-<ACCOUNT_ID> --recursive
 aws s3 rb s3://purchase-approval-ui-<ACCOUNT_ID>
-```
+````
 
 ### Solución de problemas
 
-| Error | Causa | Solución |
-|---|---|---|
-| `ENOENT: no such file or directory ... Helvetica.afm` | pdfkit no encuentra fuentes al estar empaquetado | `serverless.yml` ya incluye `external: [pdfkit]`. Reiniciar `serverless offline` |
-| `DynamoDB Local no inicia` | Java no instalado | Verificar `java --version`. Instalar OpenJDK 11+ |
-| `Module Federation: ScriptExternalLoadError` | URLs de remotes incorrectas en producción | Verificar `MF_BASE_URL` apunta al bucket S3 correcto |
-| `Access Denied` en bucket S3 | Política de bucket no configurada | Ejecutar `aws s3api put-bucket-policy` |
-| Enlaces de aprobación apuntan a `localhost` en prod | `APPROVAL_BASE_URL` no configurada en Lambda | Re-desplegar backend con `export APPROVAL_BASE_URL=<frontend-url>/shell/approvals` |
-| `The CloudFormation template is invalid: Resource name must be non-empty` | Hardcoded `-dev-` en function names | Actualizado — usar `${self:provider.stage}` en `name:` |
-| Lambda timeout en descarga de PDF | Tiempo insuficiente | Verificar `timeout: 15` en la función `downloadEvidence` |
+| Error                                                                     | Causa                                            | Solución                                                                           |
+| ------------------------------------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| `ENOENT: no such file or directory ... Helvetica.afm`                     | pdfkit no encuentra fuentes al estar empaquetado | `serverless.yml` ya incluye `external: [pdfkit]`. Reiniciar `serverless offline`   |
+| `DynamoDB Local no inicia`                                                | Java no instalado                                | Verificar `java --version`. Instalar OpenJDK 11+                                   |
+| `Module Federation: ScriptExternalLoadError`                              | URLs de remotes incorrectas en producción        | Verificar `MF_BASE_URL` apunta al bucket S3 correcto                               |
+| `Access Denied` en bucket S3                                              | Política de bucket no configurada                | Ejecutar `aws s3api put-bucket-policy`                                             |
+| Enlaces de aprobación apuntan a `localhost` en prod                       | `APPROVAL_BASE_URL` no configurada en Lambda     | Re-desplegar backend con `export APPROVAL_BASE_URL=<frontend-url>/shell/approvals` |
+| `The CloudFormation template is invalid: Resource name must be non-empty` | Hardcoded `-dev-` en function names              | Actualizado — usar `${self:provider.stage}` en `name:`                             |
+| Lambda timeout en descarga de PDF                                         | Tiempo insuficiente                              | Verificar `timeout: 15` en la función `downloadEvidence`                           |
