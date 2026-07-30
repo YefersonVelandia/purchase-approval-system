@@ -15,6 +15,9 @@ const Layout: React.FC = () => {
             <li>
               <Link to="/approvals">Aprobaciones</Link>
             </li>
+            <li>
+              <Link to="/approvals/inbox">Bandeja</Link>
+            </li>
           </ul>
         </nav>
       </header>
