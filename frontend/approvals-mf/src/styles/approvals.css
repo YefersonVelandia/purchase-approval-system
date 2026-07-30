@@ -1,0 +1,271 @@
+.page-status {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.page-error {
+  color: #ef4444;
+}
+
+.form-error {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 0.6rem 1.5rem;
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #1557b0;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.otp-container {
+  max-width: 440px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.otp-container h2 {
+  margin-bottom: 0.75rem;
+}
+
+.otp-desc {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.otp-expires {
+  color: #f59e0b;
+  font-size: 0.85rem;
+}
+
+.otp-form {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.otp-form input {
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.5em;
+}
+
+.otp-form .btn-primary {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.approval-detail-page {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.approval-detail {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.detail-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  color: #fff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.detail-body {
+  padding: 1.5rem;
+}
+
+.detail-row {
+  margin-bottom: 1rem;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.detail-value {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.approval-section {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.approval-section h3 {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+}
+
+.approval-actions {
+  max-width: 400px;
+}
+
+.actions-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.btn-approve {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  background: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.btn-approve:hover:not(:disabled) {
+  background: #059669;
+}
+
+.btn-approve:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-reject {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.btn-reject:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.btn-reject:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.approval-result {
+  max-width: 500px;
+  margin: 3rem auto;
+  padding: 3rem 2rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.result-icon {
+  font-size: 3rem;
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 1.5rem;
+  color: #fff;
+}
+
+.result-approved .result-icon {
+  background: #10b981;
+}
+
+.result-rejected .result-icon {
+  background: #ef4444;
+}
+
+.approval-result h2 {
+  margin-bottom: 0.75rem;
+}
+
+.approval-result p {
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.result-signed {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.result-info {
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}

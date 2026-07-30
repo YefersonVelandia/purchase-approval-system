@@ -42,6 +42,18 @@ importers:
         specifier: ^6.28.0
         version: 6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
+      '@testing-library/jest-dom':
+        specifier: ^7.0.0
+        version: 7.0.0(@testing-library/dom@10.4.1)
+      '@testing-library/react':
+        specifier: ^16.3.2
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.1
       '@types/react':
         specifier: ^18.3.12
         version: 18.3.31
@@ -54,9 +66,18 @@ importers:
       html-webpack-plugin:
         specifier: ^5.6.3
         version: 5.6.8(webpack@5.109.2)
+      jest:
+        specifier: ^30.4.2
+        version: 30.4.2(@types/node@22.20.1)
+      jest-environment-jsdom:
+        specifier: ^30.4.1
+        version: 30.4.1
       style-loader:
         specifier: ^4.0.0
         version: 4.0.0(webpack@5.109.2)
+      ts-jest:
+        specifier: ^29.4.12
+        version: 29.4.12(@babel/core@7.29.7)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.7))(jest-util@30.4.1)(jest@30.4.2(@types/node@22.20.1))(typescript@5.9.3)
       ts-loader:
         specifier: ^9.5.1
         version: 9.6.2(typescript@5.9.3)(webpack@5.109.2)
