@@ -167,17 +167,26 @@ docs/swagger.yaml
 
 ### Requisitos
 
-- Node.js >= 20
-- pnpm
-- Java Runtime (para DynamoDB Local)
+- **Node.js >= 20** — [Descargar](https://nodejs.org/)
+- **pnpm >= 8** — `npm install -g pnpm`
+- **Java Runtime (JRE) 11+** — **Obligatorio** para DynamoDB Local
+  - Verificar: `java --version`
+  - [Descargar OpenJDK 11 LTS](https://adoptium.net/)
+  - Windows: instalar desde el instalador MSI
+  - macOS: `brew install openjdk@11`
+  - Linux: `sudo apt install openjdk-11-jre` (Debian/Ubuntu)
 
 ### Backend
 
 ```bash
 cd backend
-pnpm install
-pnpm dev
+npm install
+npm run setup              # Solo la primera vez (descarga DynamoDB Local)
+npx serverless dynamodb start    # Terminal 1 - Puerto 8000
+npm run dev                      # Terminal 2 - Puerto 3000
 ```
+
+> ⚠️ La **primera vez** que ejecutes `serverless dynamodb start`, puede tomar ~30s descargar e iniciar DynamoDB Local. Espera a que aparezca `[DynamoDB Local] Started` antes de iniciar el backend.
 
 Esto inicia:
 - API REST en `http://localhost:3000`
@@ -188,13 +197,15 @@ Esto inicia:
 ```bash
 cd frontend
 pnpm install
-pnpm dev
+pnpm dev                           # Terminal 3
 ```
 
 Esto inicia:
 - Shell (Host) en `http://localhost:3001`
 - Requests MF en `http://localhost:3002`
 - Approvals MF en `http://localhost:3003`
+
+> Abrir el navegador en **http://localhost:3001**. Los microfrontends se cargan dentro del shell vía Module Federation. Abrir los puertos 3002 o 3003 por separado es opcional para depuración.
 
 ### Flujo de prueba local completo
 
@@ -387,11 +398,11 @@ pnpm test
 
 ### Requisitos previos
 
-- AWS CLI configurado con credenciales
+- AWS CLI configurado con credenciales (`aws configure`)
 - Node.js >= 20
 - pnpm
 
-### Pasos
+### Backend (Serverless)
 
 ```bash
 cd backend
@@ -406,7 +417,7 @@ serverless deploy --stage prod
 serverless deploy function --function createPurchaseRequest
 ```
 
-### Recursos creados automáticamente
+### Recursos backend creados automáticamente
 
 | Recurso | Descripción |
 |---|---|
@@ -414,11 +425,99 @@ serverless deploy function --function createPurchaseRequest
 | API Gateway HTTP API | Endpoints REST expuestos |
 | DynamoDB PurchaseRequests | Tabla de solicitudes |
 | DynamoDB Approvals | Tabla de aprobaciones con GSIs |
-| S3 Bucket | Almacenamiento de PDFs |
+| S3 Bucket | Almacenamiento de PDFs de evidencia |
 | IAM Roles | Permisos mínimos necesarios |
+
+### Frontend (S3 Static Website)
+
+Después de desplegar el backend, obtener la URL del API Gateway del output (`https://xxxx.execute-api.us-east-1.amazonaws.com`).
+
+#### Opción 1: Script automatizado (recomendado)
+
+```bash
+cd frontend
+
+# Linux/macOS
+chmod +x deploy.sh
+./deploy.sh https://xxxx.execute-api.us-east-1.amazonaws.com
+
+# Windows PowerShell
+.\deploy.ps1 -ApiBaseUrl "https://xxxx.execute-api.us-east-1.amazonaws.com"
+```
+
+#### Opción 2: Manual paso a paso
+
+```bash
+cd frontend
+
+# 1. Build producción (inyectando URLs)
+MF_BASE_URL=http://purchase-approval-ui-<ACCOUNT_ID>.s3-website-us-east-1.amazonaws.com \
+  API_BASE_URL=https://xxxx.execute-api.us-east-1.amazonaws.com \
+  pnpm build:production
+
+# 2. Crear bucket (un reemplazar <ACCOUNT_ID>)
+aws s3 mb s3://purchase-approval-ui-<ACCOUNT_ID> --region us-east-1
+
+# 3. Subir assets
+aws s3 sync shell/dist/ s3://purchase-approval-ui-<ACCOUNT_ID>/shell/ --delete
+aws s3 sync requests-mf/dist/ s3://purchase-approval-ui-<ACCOUNT_ID>/requests-mf/ --delete
+aws s3 sync approvals-mf/dist/ s3://purchase-approval-ui-<ACCOUNT_ID>/approvals-mf/ --delete
+
+# 4. Habilitar Static Website
+aws s3 website s3://purchase-approval-ui-<ACCOUNT_ID> \
+  --index-document shell/index.html \
+  --error-document shell/index.html
+
+# 5. Política de acceso público
+aws s3api put-bucket-policy --bucket purchase-approval-ui-<ACCOUNT_ID> \
+  --policy '{
+    "Version":"2012-10-17",
+    "Statement":[{
+      "Effect":"Allow",
+      "Principal":"*",
+      "Action":"s3:GetObject",
+      "Resource":"arn:aws:s3:::purchase-approval-ui-<ACCOUNT_ID>/*"
+    }]
+  }'
+
+# 6. CORS
+aws s3api put-bucket-cors --bucket purchase-approval-ui-<ACCOUNT_ID> \
+  --cors-configuration '{"CORSRules":[{"AllowedOrigins":["*"],"AllowedMethods":["GET","HEAD"],"AllowedHeaders":["*"]}]}'
+
+echo "Frontend URL: http://purchase-approval-ui-<ACCOUNT_ID>.s3-website-us-east-1.amazonaws.com/shell/"
+```
+
+### Notas de Free Tier (AWS)
+
+Este proyecto está diseñado para mantenerse dentro del **AWS Free Tier** para fines de evaluación:
+
+| Servicio | Configuración | Límite Free Tier |
+|---|---|---|
+| Lambda | 12 funciones, 256MB máx, 15s timeout | 1M requests/mes |
+| API Gateway HTTP | Sin dominio custom, PAY_PER_REQUEST | 1M requests/mes |
+| DynamoDB | On-demand (PAY_PER_REQUEST), 2 tablas | 25GB almacenamiento |
+| S3 | Bucket evidencias + bucket frontend | 5GB (12 meses) |
+| CloudWatch Logs | Retención 7 días | 5GB/mes |
+
+> ⚠️ El bucket S3 del frontend se sirve vía **HTTP** (no HTTPS). Esto mantiene el costo en cero. Los navegadores no bloquean peticiones HTTP→HTTPS (API Gateway), por lo que no hay mixed content warnings.
 
 ### Eliminar recursos
 
 ```bash
+# Backend
+cd backend
 serverless remove
+
+# Frontend (vaciar y eliminar bucket)
+aws s3 rm s3://purchase-approval-ui-<ACCOUNT_ID> --recursive
+aws s3 rb s3://purchase-approval-ui-<ACCOUNT_ID>
 ```
+
+### Solución de problemas
+
+| Error | Causa | Solución |
+|---|---|---|
+| `ENOENT: no such file or directory ... Helvetica.afm` | pdfkit no encuentra fuentes al estar empaquetado | `serverless.yml` ya incluye `external: [pdfkit]`. Reiniciar `serverless offline` |
+| `DynamoDB Local no inicia` | Java no instalado | Verificar `java --version`. Instalar OpenJDK 11+ |
+| `Module Federation: ScriptExternalLoadError` | URLs de remotes incorrectas en producción | Verificar `MF_BASE_URL` apunta al bucket S3 correcto |
+| `Access Denied` en bucket S3 | Política de bucket no configurada | Ejecutar `aws s3api put-bucket-policy` |
