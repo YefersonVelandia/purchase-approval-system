@@ -56,6 +56,10 @@ module.exports = (env, argv) => {
       port,
       historyApiFallback: true,
       hot: true,
+      allowedHosts: "all",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
     },
   };
 };
