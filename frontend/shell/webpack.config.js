@@ -13,6 +13,7 @@ module.exports = (env, argv) => {
     output: {
       path: path.resolve(__dirname, "dist"),
       publicPath: `http://localhost:${port}/`,
+      crossOriginLoading: "anonymous",
     },
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".jsx"],
