@@ -4,9 +4,10 @@ import { Approval, ApprovalStatus } from "../../domain/entities/approval.entity"
 
 import { ApprovalRepository } from "../../application/ports/approval.repository";
 import { dynamoDBClient } from "../database/dynamodb.client";
+import { env } from "../config/env";
 
 export class DynamoDBApprovalRepository implements ApprovalRepository {
-  private readonly tableName = "Approvals";
+  private readonly tableName = env.approvalsTable;
 
   async save(approval: Approval): Promise<void> {
     await dynamoDBClient.send(
@@ -16,6 +17,9 @@ export class DynamoDBApprovalRepository implements ApprovalRepository {
           id: approval.id,
           purchaseRequestId: approval.data.purchaseRequestId,
           approverId: approval.data.approverId,
+          approvalToken: approval.data.approvalToken,
+          otpCode: approval.data.otpCode,
+          otpExpiresAt: approval.data.otpExpiresAt?.toISOString(),
           status: approval.data.status,
           createdAt: approval.data.createdAt.toISOString(),
           updatedAt: approval.data.updatedAt.toISOString(),
@@ -42,12 +46,17 @@ export class DynamoDBApprovalRepository implements ApprovalRepository {
       id: result.Item.id,
       purchaseRequestId: result.Item.purchaseRequestId,
       approverId: result.Item.approverId,
+      approvalToken: result.Item.approvalToken,
+      otpCode: result.Item.otpCode,
+      otpExpiresAt: result.Item.otpExpiresAt ? new Date(result.Item.otpExpiresAt) : undefined,
       status: result.Item.status as ApprovalStatus,
       createdAt: new Date(result.Item.createdAt),
       updatedAt: new Date(result.Item.updatedAt),
     });
   }
 
+  // Query por GSI PurchaseRequestIndex para obtener todas las
+  // aprobaciones asociadas a una solicitud de compra
   async findByPurchaseRequestId(purchaseRequestId: string): Promise<Approval[]> {
     const result = await dynamoDBClient.send(
       new QueryCommand({
@@ -65,6 +74,9 @@ export class DynamoDBApprovalRepository implements ApprovalRepository {
         id: item.id,
         purchaseRequestId: item.purchaseRequestId,
         approverId: item.approverId,
+        approvalToken: item.approvalToken,
+        otpCode: item.otpCode,
+        otpExpiresAt: item.otpExpiresAt ? new Date(item.otpExpiresAt) : undefined,
         status: item.status as ApprovalStatus,
         createdAt: new Date(item.createdAt),
         updatedAt: new Date(item.updatedAt),
@@ -72,22 +84,58 @@ export class DynamoDBApprovalRepository implements ApprovalRepository {
     );
   }
 
-  async updateStatus(id: string, approval: Approval): Promise<void> {
+  async update(approval: Approval): Promise<void> {
     await dynamoDBClient.send(
       new UpdateCommand({
         TableName: this.tableName,
         Key: {
-          id,
+          id: approval.id,
         },
-        UpdateExpression: "SET #status = :status, updatedAt = :updatedAt",
+        UpdateExpression:
+          "SET otpCode = :otpCode, otpExpiresAt = :otpExpiresAt, updatedAt = :updatedAt, #status = :status",
         ExpressionAttributeNames: {
           "#status": "status",
         },
         ExpressionAttributeValues: {
-          ":status": approval.data.status,
+          ":otpCode": approval.data.otpCode,
+          ":otpExpiresAt": approval.data.otpExpiresAt?.toISOString(),
           ":updatedAt": approval.data.updatedAt.toISOString(),
+          ":status": approval.data.status,
         },
       }),
     );
+  }
+
+  // Query por GSI ApprovalTokenIndex para lookup por token único.
+  // El token es el mecanismo de seguridad para acceder a la aprobación
+  async findByApprovalToken(token: string): Promise<Approval | null> {
+    const result = await dynamoDBClient.send(
+      new QueryCommand({
+        TableName: this.tableName,
+        IndexName: "ApprovalTokenIndex",
+        KeyConditionExpression: "approvalToken = :approvalToken",
+        ExpressionAttributeValues: {
+          ":approvalToken": token,
+        },
+      }),
+    );
+
+    const item = result.Items?.[0];
+
+    if (!item) {
+      return null;
+    }
+
+    return Approval.create({
+      id: item.id,
+      purchaseRequestId: item.purchaseRequestId,
+      approverId: item.approverId,
+      approvalToken: item.approvalToken,
+      otpCode: item.otpCode,
+      otpExpiresAt: item.otpExpiresAt ? new Date(item.otpExpiresAt) : undefined,
+      status: item.status as ApprovalStatus,
+      createdAt: new Date(item.createdAt),
+      updatedAt: new Date(item.updatedAt),
+    });
   }
 }

@@ -4,6 +4,7 @@ node_modules/
 # Environment variables
 .env
 .env.*
+!.env.example
 
 # Build output
 dist/
@@ -33,3 +34,7 @@ Thumbs.db
 dist/
 node_modules/
 .env
+
+# DynamoDB local
+shared-local-instance.db
+.dynamodb/mock-emails.json

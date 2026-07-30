@@ -8,9 +8,14 @@ export interface ApprovalProps {
   id: string;
   purchaseRequestId: string;
   approverId: string;
+  approvalToken: string;
   status: ApprovalStatus;
+  otpCode?: string;
+  otpExpiresAt?: Date;
   createdAt: Date;
   updatedAt: Date;
+  signedAt?: Date;
+  signedBy?: string;
 }
 
 export class Approval {
@@ -25,36 +30,55 @@ export class Approval {
       throw new Error("Approver id is required");
     }
 
+    if (!props.approvalToken.trim()) {
+      throw new Error("Approval token is required");
+    }
+
     return new Approval({
       ...props,
       status: props.status ?? ApprovalStatus.PENDING,
     });
   }
 
-  changeStatus(status: ApprovalStatus): Approval {
-    if (!this.canChangeStatus(status)) {
+  changeStatus(status: ApprovalStatus, signedBy?: string): Approval {
+    // Una vez APPROVED o REJECTED, el estado es irreversible
+    if (this.props.status === ApprovalStatus.APPROVED && status !== ApprovalStatus.APPROVED) {
       throw new Error(`Cannot change approval status from ${this.props.status} to ${status}`);
     }
+
+    if (this.props.status === ApprovalStatus.REJECTED && status !== ApprovalStatus.REJECTED) {
+      throw new Error(`Cannot change approval status from ${this.props.status} to ${status}`);
+    }
+
+    const signedAt = status === ApprovalStatus.APPROVED || status === ApprovalStatus.REJECTED 
+      ? new Date() 
+      : undefined;
 
     return new Approval({
       ...this.props,
       status,
       updatedAt: new Date(),
+      signedAt,
+      signedBy: signedBy || this.props.signedBy,
     });
   }
 
-  private canChangeStatus(newStatus: ApprovalStatus): boolean {
-    if (this.props.status === newStatus) {
-      return true;
+  generateOtp(otpCode: string, otpExpiresAt: Date): Approval {
+    return new Approval({
+      ...this.props,
+      otpCode,
+      otpExpiresAt,
+      updatedAt: new Date(),
+    });
+  }
+
+  // Valida OTP por comparación directa + verificación de expiración (3 min)
+  isOtpValid(code: string): boolean {
+    if (!this.props.otpCode || !this.props.otpExpiresAt) {
+      return false;
     }
 
-    const transitions: Record<ApprovalStatus, ApprovalStatus[]> = {
-      PENDING: [ApprovalStatus.APPROVED, ApprovalStatus.REJECTED],
-      APPROVED: [],
-      REJECTED: [],
-    };
-
-    return transitions[this.props.status].includes(newStatus);
+    return this.props.otpCode === code && this.props.otpExpiresAt.getTime() > Date.now();
   }
 
   get id(): string {

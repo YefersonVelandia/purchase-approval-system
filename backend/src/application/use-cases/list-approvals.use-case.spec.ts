@@ -9,7 +9,10 @@ describe("ListApprovalsUseCase", () => {
         id: "approval-1",
         purchaseRequestId: "request-123",
         approverId: "manager-001",
+        approvalToken: "token-123",
         status: ApprovalStatus.PENDING,
+        otpCode: "123456",
+        otpExpiresAt: new Date(Date.now() + 180000),
         createdAt: new Date(),
         updatedAt: new Date(),
       }),
@@ -19,7 +22,8 @@ describe("ListApprovalsUseCase", () => {
       save: jest.fn(),
       findById: jest.fn(),
       findByPurchaseRequestId: jest.fn().mockResolvedValue(approvals),
-      updateStatus: jest.fn(),
+      update: jest.fn(),
+      findByApprovalToken: jest.fn(),
     };
 
     const useCase = new ListApprovalsUseCase(repository);
@@ -37,7 +41,8 @@ describe("ListApprovalsUseCase", () => {
       save: jest.fn(),
       findById: jest.fn(),
       findByPurchaseRequestId: jest.fn().mockResolvedValue([]),
-      updateStatus: jest.fn(),
+      update: jest.fn(),
+      findByApprovalToken: jest.fn(),
     };
 
     const useCase = new ListApprovalsUseCase(repository);

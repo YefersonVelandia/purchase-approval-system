@@ -15,6 +15,9 @@ export class EvaluatePurchaseRequestApprovalUseCase {
     private readonly purchaseRequestRepository: PurchaseRequestRepository,
   ) {}
 
+  // Evalúa el estado consolidado de todas las aprobaciones para determinar
+  // la transición de la solicitud: si alguna rechaza -> REJECTED,
+  // si todas aprueban -> COMPLETED, si hay mixto -> se mantiene
   async execute(input: EvaluatePurchaseRequestApprovalInput) {
     const approvals = await this.approvalRepository.findByPurchaseRequestId(
       input.purchaseRequestId,
@@ -39,7 +42,7 @@ export class EvaluatePurchaseRequestApprovalUseCase {
     }
 
     if (allApproved) {
-      newStatus = PurchaseRequestStatus.SIGNED;
+      newStatus = PurchaseRequestStatus.COMPLETED;
     }
 
     if (!newStatus) {

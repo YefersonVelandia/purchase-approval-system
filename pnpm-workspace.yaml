@@ -1,4 +1,5 @@
 packages:
   - "backend"
-  - "frontend"
-  - "packages/*"
+  - "frontend/shell"
+  - "frontend/requests-mf"
+  - "frontend/approvals-mf"
