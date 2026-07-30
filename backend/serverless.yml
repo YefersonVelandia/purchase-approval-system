@@ -18,7 +18,7 @@ provider:
 
   timeout: 15
   memorySize: 256
-  logsRetentionInDays: 7
+  logRetentionInDays: 7
 
   tags:
     Project: PurchaseApprovalSystem
@@ -137,5 +137,5 @@ resources:
         PublicAccessBlockConfiguration:
           BlockPublicAcls: true
           BlockPublicPolicy: true
-          BlockPublicAccess: true
           IgnorePublicAcls: true
+          RestrictPublicBuckets: true
