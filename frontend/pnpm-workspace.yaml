@@ -1,0 +1,4 @@
+packages:
+  - shell
+  - requests-mf
+  - approvals-mf
