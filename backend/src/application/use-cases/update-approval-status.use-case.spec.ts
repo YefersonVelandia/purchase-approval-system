@@ -19,6 +19,8 @@ describe("UpdateApprovalStatusUseCase", () => {
       approverId: "manager-001",
       approvalToken: "token-123",
       status: ApprovalStatus.PENDING,
+      otpCode: "123456",
+      otpExpiresAt: new Date(Date.now() + 180000),
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -112,6 +114,8 @@ describe("UpdateApprovalStatusUseCase", () => {
       approverId: "manager-001",
       approvalToken: "token-123",
       status: ApprovalStatus.APPROVED,
+      otpCode: "123456",
+      otpExpiresAt: new Date(Date.now() + 180000),
       createdAt: new Date(),
       updatedAt: new Date(),
     });
