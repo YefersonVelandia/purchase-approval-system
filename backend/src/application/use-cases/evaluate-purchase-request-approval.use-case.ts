@@ -39,7 +39,7 @@ export class EvaluatePurchaseRequestApprovalUseCase {
     }
 
     if (allApproved) {
-      newStatus = PurchaseRequestStatus.SIGNED;
+      newStatus = PurchaseRequestStatus.COMPLETED;
     }
 
     if (!newStatus) {

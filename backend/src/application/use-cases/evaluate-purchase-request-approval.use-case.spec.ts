@@ -27,7 +27,7 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
     createdAt: new Date(),
   });
 
-  it("should change purchase request to SIGNED when all approvals are approved", async () => {
+  it("should change purchase request to COMPLETED when all approvals are approved", async () => {
     const approvals = [
       Approval.create({
         id: "approval-1",
@@ -68,7 +68,7 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
       save: jest.fn(),
       findById: jest.fn(),
       findByPurchaseRequestId: jest.fn().mockResolvedValue(approvals),
-      updateStatus: jest.fn(),
+      update: jest.fn(),
       findByApprovalToken: jest.fn(),
     };
 
@@ -88,7 +88,7 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
       purchaseRequestId: "request-123",
     });
 
-    expect(result?.status).toBe(PurchaseRequestStatus.SIGNED);
+    expect(result?.status).toBe(PurchaseRequestStatus.COMPLETED);
 
     expect(requestRepository.updateStatus).toHaveBeenCalled();
   });
@@ -134,7 +134,7 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
       save: jest.fn(),
       findById: jest.fn(),
       findByPurchaseRequestId: jest.fn().mockResolvedValue(approvals),
-      updateStatus: jest.fn(),
+      update: jest.fn(),
       findByApprovalToken: jest.fn(),
     };
 
@@ -176,7 +176,7 @@ describe("EvaluatePurchaseRequestApprovalUseCase", () => {
       save: jest.fn(),
       findById: jest.fn(),
       findByPurchaseRequestId: jest.fn().mockResolvedValue(approvals),
-      updateStatus: jest.fn(),
+      update: jest.fn(),
       findByApprovalToken: jest.fn(),
     };
 

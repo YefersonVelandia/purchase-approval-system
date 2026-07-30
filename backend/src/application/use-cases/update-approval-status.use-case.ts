@@ -8,6 +8,7 @@ import { EvaluatePurchaseRequestApprovalUseCase } from "./evaluate-purchase-requ
 interface UpdateApprovalStatusInput {
   id: string;
   status: ApprovalStatus;
+  signedBy?: string;
 }
 
 export class UpdateApprovalStatusUseCase {
@@ -30,9 +31,9 @@ export class UpdateApprovalStatusUseCase {
       throw new Error("Approval not found");
     }
 
-    const updatedApproval = approval.changeStatus(input.status);
+    const updatedApproval = approval.changeStatus(input.status, input.signedBy);
 
-    await this.approvalRepository.updateStatus(input.id, updatedApproval);
+    await this.approvalRepository.update(updatedApproval);
 
     await this.evaluator.execute({
       purchaseRequestId: updatedApproval.data.purchaseRequestId,

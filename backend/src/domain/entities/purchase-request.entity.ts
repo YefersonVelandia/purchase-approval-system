@@ -106,7 +106,7 @@ export class PurchaseRequest {
     }
 
     const transitions: Record<PurchaseRequestStatus, PurchaseRequestStatus[]> = {
-      PENDING: [PurchaseRequestStatus.SIGNED, PurchaseRequestStatus.REJECTED],
+      PENDING: [PurchaseRequestStatus.COMPLETED, PurchaseRequestStatus.REJECTED],
       SIGNED: [PurchaseRequestStatus.COMPLETED, PurchaseRequestStatus.REJECTED],
       REJECTED: [],
       COMPLETED: [],

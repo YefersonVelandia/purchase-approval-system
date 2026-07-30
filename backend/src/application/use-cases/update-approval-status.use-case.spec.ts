@@ -56,7 +56,7 @@ describe("UpdateApprovalStatusUseCase", () => {
       save: jest.fn(),
       findById: jest.fn().mockResolvedValue(approval),
       findByPurchaseRequestId: jest.fn().mockResolvedValue([approval]),
-      updateStatus: jest.fn(),
+      update: jest.fn(),
       findByApprovalToken: jest.fn(),
     };
 
@@ -76,7 +76,7 @@ describe("UpdateApprovalStatusUseCase", () => {
 
     expect(result.status).toBe(ApprovalStatus.APPROVED);
 
-    expect(approvalRepository.updateStatus).toHaveBeenCalled();
+    expect(approvalRepository.update).toHaveBeenCalled();
 
     expect(purchaseRequestRepository.updateStatus).not.toHaveBeenCalled();
   });
@@ -86,7 +86,7 @@ describe("UpdateApprovalStatusUseCase", () => {
       save: jest.fn(),
       findById: jest.fn().mockResolvedValue(null),
       findByPurchaseRequestId: jest.fn(),
-      updateStatus: jest.fn(),
+      update: jest.fn(),
       findByApprovalToken: jest.fn(),
     };
 
@@ -124,7 +124,7 @@ describe("UpdateApprovalStatusUseCase", () => {
       save: jest.fn(),
       findById: jest.fn().mockResolvedValue(approval),
       findByPurchaseRequestId: jest.fn().mockResolvedValue([approval]),
-      updateStatus: jest.fn(),
+      update: jest.fn(),
       findByApprovalToken: jest.fn(),
     };
 

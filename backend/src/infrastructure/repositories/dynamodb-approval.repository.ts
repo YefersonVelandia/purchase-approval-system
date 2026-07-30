@@ -4,9 +4,10 @@ import { Approval, ApprovalStatus } from "../../domain/entities/approval.entity"
 
 import { ApprovalRepository } from "../../application/ports/approval.repository";
 import { dynamoDBClient } from "../database/dynamodb.client";
+import { env } from "../config/env";
 
 export class DynamoDBApprovalRepository implements ApprovalRepository {
-  private readonly tableName = "Approvals";
+  private readonly tableName = env.approvalsTable;
 
   async save(approval: Approval): Promise<void> {
     await dynamoDBClient.send(

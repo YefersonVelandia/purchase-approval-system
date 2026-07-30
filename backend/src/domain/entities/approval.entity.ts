@@ -14,6 +14,8 @@ export interface ApprovalProps {
   otpExpiresAt?: Date;
   createdAt: Date;
   updatedAt: Date;
+  signedAt?: Date;
+  signedBy?: string;
 }
 
 export class Approval {
@@ -38,7 +40,7 @@ export class Approval {
     });
   }
 
-  changeStatus(status: ApprovalStatus): Approval {
+  changeStatus(status: ApprovalStatus, signedBy?: string): Approval {
     if (this.props.status === ApprovalStatus.APPROVED && status !== ApprovalStatus.APPROVED) {
       throw new Error(`Cannot change approval status from ${this.props.status} to ${status}`);
     }
@@ -47,10 +49,16 @@ export class Approval {
       throw new Error(`Cannot change approval status from ${this.props.status} to ${status}`);
     }
 
+    const signedAt = status === ApprovalStatus.APPROVED || status === ApprovalStatus.REJECTED 
+      ? new Date() 
+      : undefined;
+
     return new Approval({
       ...this.props,
       status,
       updatedAt: new Date(),
+      signedAt,
+      signedBy: signedBy || this.props.signedBy,
     });
   }
 
