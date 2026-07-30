@@ -2,6 +2,14 @@
 
 Sistema de flujo de aprobación de solicitudes de compra con firma digital concatenada.
 
+## Despliegue en producción
+
+| Recurso | URL |
+|---|---|
+| **Frontend** | http://purchase-approval-ui-594954690298.s3-website-us-east-1.amazonaws.com/shell/ |
+| **API Gateway** | https://dwkfygacfa.execute-api.us-east-1.amazonaws.com |
+| **Health Check** | https://dwkfygacfa.execute-api.us-east-1.amazonaws.com/health |
+
 ## Descripción
 
 El sistema resuelve el problema de gestionar el ciclo de vida completo de aprobación de compras empresariales. Un solicitante crea una solicitud que debe ser aprobada por 3 aprobadores con roles específicos (Gerente, Finanzas, Legal). Cada aprobador recibe un link único con token, valida su identidad mediante OTP, y procede a firmar digitalmente (aprobar o rechazar). Cuando los 3 aprobadores firman, se genera automáticamente un PDF de evidencia con todas las firmas concatenadas.
