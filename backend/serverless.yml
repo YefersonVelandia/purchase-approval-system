@@ -30,6 +30,7 @@ provider:
     APPROVALS_TABLE: Approvals-${self:provider.stage}
     S3_BUCKET_NAME: !Ref EvidenceBucket
     NODE_ENV: ${self:provider.stage}
+    APPROVAL_BASE_URL: ${env:APPROVAL_BASE_URL, 'http://localhost:3001/approvals'}
 
   iamRoleStatements:
     - Effect: Allow

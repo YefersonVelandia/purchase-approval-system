@@ -4,8 +4,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
 
 const MF_BASE_URL = process.env.MF_BASE_URL || "http://localhost:3001";
-const REQUESTS_MF_URL = process.env.REQUESTS_MF_URL || `${MF_BASE_URL}/requests-mf/remoteEntry.js`;
-const APPROVALS_MF_URL = process.env.APPROVALS_MF_URL || `${MF_BASE_URL}/approvals-mf/remoteEntry.js`;
+const REQUESTS_MF_URL = process.env.REQUESTS_MF_URL || "http://localhost:3002/remoteEntry.js";
+const APPROVALS_MF_URL = process.env.APPROVALS_MF_URL || "http://localhost:3003/remoteEntry.js";
 
 module.exports = {
   mode: "production",

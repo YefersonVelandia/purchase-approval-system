@@ -12,9 +12,12 @@ if (-not $BucketName) {
 }
 
 Write-Host "=== Build Frontend (producción) ===" -ForegroundColor Green
-$env:MF_BASE_URL = "http://${BucketName}.s3-website-${Region}.amazonaws.com"
+$FrontendUrl = "http://${BucketName}.s3-website-${Region}.amazonaws.com"
+$env:MF_BASE_URL = $FrontendUrl
 $env:API_BASE_URL = $ApiBaseUrl
 pnpm build:production
+
+$env:APPROVAL_BASE_URL = "${FrontendUrl}/shell/approvals"
 
 Write-Host "=== Crear bucket S3 (si no existe) ===" -ForegroundColor Green
 aws s3 mb "s3://${BucketName}" --region $Region 2>$null
