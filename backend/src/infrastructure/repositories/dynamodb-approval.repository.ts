@@ -55,6 +55,8 @@ export class DynamoDBApprovalRepository implements ApprovalRepository {
     });
   }
 
+  // Query por GSI PurchaseRequestIndex para obtener todas las
+  // aprobaciones asociadas a una solicitud de compra
   async findByPurchaseRequestId(purchaseRequestId: string): Promise<Approval[]> {
     const result = await dynamoDBClient.send(
       new QueryCommand({
@@ -104,6 +106,8 @@ export class DynamoDBApprovalRepository implements ApprovalRepository {
     );
   }
 
+  // Query por GSI ApprovalTokenIndex para lookup por token único.
+  // El token es el mecanismo de seguridad para acceder a la aprobación
   async findByApprovalToken(token: string): Promise<Approval | null> {
     const result = await dynamoDBClient.send(
       new QueryCommand({

@@ -6,21 +6,21 @@ health:
         method: get
 
 createPurchaseRequest:
-  handler: src/adapters/handlers/create-purchase-request.handler.handler
+  handler: src/adapters/handlers/create-purchase-request.handler
   events:
     - httpApi:
         path: /purchase-requests
         method: post
 
 getPurchaseRequest:
-  handler: src/adapters/handlers/get-purchase-request.handler.handler
+  handler: src/adapters/handlers/get-purchase-request.handler
   events:
     - httpApi:
         path: /purchase-requests/{id}
         method: get
 
 listPurchaseRequests:
-  handler: src/adapters/handlers/list-purchase-requests.handler.handler
+  handler: src/adapters/handlers/list-purchase-requests.handler
   events:
     - httpApi:
         path: /purchase-requests
@@ -28,7 +28,7 @@ listPurchaseRequests:
   name: purchase-approval-system-dev-listPurchaseRequests
 
 updatePurchaseRequestStatus:
-  handler: src/adapters/handlers/update-purchase-request-status.handler.handler
+  handler: src/adapters/handlers/update-purchase-request-status.handler
   events:
     - httpApi:
         path: /purchase-requests/{id}/status
@@ -36,7 +36,7 @@ updatePurchaseRequestStatus:
   name: purchase-approval-system-dev-updatePurchaseRequestStatus
 
 createApproval:
-  handler: src/adapters/handlers/create-approval.handler.handler
+  handler: src/adapters/handlers/create-approval.handler
   events:
     - httpApi:
         path: /purchase-requests/{id}/approvals
@@ -44,7 +44,7 @@ createApproval:
   name: purchase-approval-system-dev-createApproval
 
 listApprovals:
-  handler: src/adapters/handlers/list-approvals.handler.handler
+  handler: src/adapters/handlers/list-approvals.handler
   events:
     - httpApi:
         path: /purchase-requests/{id}/approvals
@@ -52,37 +52,40 @@ listApprovals:
   name: purchase-approval-system-dev-listApprovals
 
 updateApprovalStatus:
-  handler: src/adapters/handlers/update-approval-status.handler.handler
+  handler: src/adapters/handlers/update-approval-status.handler
   events:
     - httpApi:
         path: /approvals/{id}
         method: patch
-  name: purchase-approval-system-dev-updateApprovalStatus
+  timeout: 15
+  memorySize: 256
 
 generateApprovalOtp:
-  handler: src/adapters/handlers/generate-approval-otp.handler.handler
+  handler: src/adapters/handlers/generate-approval-otp.handler
   events:
     - httpApi:
         path: /approvals/{token}/otp
         method: get
 
 validateApprovalOtp:
-  handler: src/adapters/handlers/validate-approval-otp.handler.handler
+  handler: src/adapters/handlers/validate-approval-otp.handler
   events:
     - httpApi:
         path: /approvals/{token}/validate-otp
         method: post
 
 mockMail:
-  handler: src/adapters/handlers/mock-mail.handler.handler
+  handler: src/adapters/handlers/mock-mail.handler
   events:
     - httpApi:
         path: /mock-mail
         method: get
 
 downloadEvidence:
-  handler: src/adapters/handlers/download-evidence.handler.handler
+  handler: src/adapters/handlers/download-evidence.handler
   events:
     - httpApi:
         path: /api/solicitudes/{id}/evidencia.pdf
         method: get
+  timeout: 15
+  memorySize: 256

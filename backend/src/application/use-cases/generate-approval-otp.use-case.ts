@@ -29,6 +29,7 @@ export class GenerateApprovalOtpUseCase {
 
     return {
       approvalId: updatedApproval.id,
+      otpCode,
       otpExpiresAt,
     };
   }

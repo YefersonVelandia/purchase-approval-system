@@ -22,6 +22,7 @@ export class DynamoDBPurchaseRequestRepository implements PurchaseRequestReposit
           approvers: request.data.approvers,
           status: request.data.status,
           createdAt: request.data.createdAt.toISOString(),
+          ...(request.data.evidenceUrl && { evidenceUrl: request.data.evidenceUrl }),
         },
       }),
     );
@@ -50,6 +51,7 @@ export class DynamoDBPurchaseRequestRepository implements PurchaseRequestReposit
       approvers: result.Item.approvers ?? [],
       status: result.Item.status,
       createdAt: new Date(result.Item.createdAt),
+      evidenceUrl: result.Item.evidenceUrl,
     });
   }
 
@@ -70,6 +72,7 @@ export class DynamoDBPurchaseRequestRepository implements PurchaseRequestReposit
         approvers: item.approvers ?? [],
         status: item.status,
         createdAt: new Date(item.createdAt),
+        evidenceUrl: item.evidenceUrl,
       }),
     );
   }
@@ -81,12 +84,13 @@ export class DynamoDBPurchaseRequestRepository implements PurchaseRequestReposit
         Key: {
           id,
         },
-        UpdateExpression: "SET #status = :status",
+        UpdateExpression: "SET #status = :status, evidenceUrl = :evidenceUrl",
         ExpressionAttributeNames: {
           "#status": "status",
         },
         ExpressionAttributeValues: {
           ":status": request.data.status,
+          ":evidenceUrl": request.data.evidenceUrl ?? null,
         },
       }),
     );

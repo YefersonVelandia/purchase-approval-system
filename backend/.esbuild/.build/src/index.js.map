@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/index.ts"],
-  "sourcesContent": ["export const handler = async () => {\r\n  return {\r\n    statusCode: 200,\r\n    body: JSON.stringify({\r\n      message: \"health ok\",\r\n    }),\r\n  };\r\n};\r\n"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,IAAM,UAAU,mCAAY;AACjC,SAAO;AAAA,IACL,YAAY;AAAA,IACZ,MAAM,KAAK,UAAU;AAAA,MACnB,SAAS;AAAA,IACX,CAAC;AAAA,EACH;AACF,GAPuB;",
-  "names": []
-}

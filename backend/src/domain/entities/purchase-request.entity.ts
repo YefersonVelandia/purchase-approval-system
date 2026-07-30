@@ -26,6 +26,7 @@ export interface PurchaseRequestProps {
   approvers: Approver[];
   status: PurchaseRequestStatus;
   createdAt: Date;
+  evidenceUrl?: string;
 }
 
 export class PurchaseRequest {
@@ -88,6 +89,13 @@ export class PurchaseRequest {
     return this.props;
   }
 
+  setEvidenceUrl(url: string): PurchaseRequest {
+    return new PurchaseRequest({
+      ...this.props,
+      evidenceUrl: url,
+    });
+  }
+
   changeStatus(status: PurchaseRequestStatus): PurchaseRequest {
     if (!this.canChangeStatus(status)) {
       throw new Error(`Cannot change status from ${this.props.status} to ${status}`);
@@ -99,8 +107,9 @@ export class PurchaseRequest {
     });
   }
 
+  // Máquina de estados: PENDING -> COMPLETED|REJECTED, SIGNED -> COMPLETED|REJECTED
+  // REJECTED y COMPLETED son estados terminales (sin transiciones salientes)
   canChangeStatus(newStatus: PurchaseRequestStatus): boolean {
-    // Si el nuevo estado es el mismo que el actual, permite el cambio (devuelve true)
     if (this.props.status === newStatus) {
       return true;
     }

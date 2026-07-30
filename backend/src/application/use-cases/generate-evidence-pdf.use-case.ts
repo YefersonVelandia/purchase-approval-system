@@ -15,6 +15,10 @@ export class GenerateEvidencePdfUseCase {
     private readonly storageRepository: StorageRepository,
   ) {}
 
+  // Genera PDF con pdfkit en buffer (sin archivo temporal) que incluye:
+  // - Cabecera: título, descripción, monto, fecha, solicitante
+  // - Tabla de aprobaciones: nombre, estado, fecha de firma, firmante
+  // Luego se sube a S3 (o mock storage) y se retorna la URL
   async execute(input: GenerateEvidencePdfInput): Promise<string> {
     const purchaseRequest = await this.purchaseRequestRepository.findById(input.purchaseRequestId);
 

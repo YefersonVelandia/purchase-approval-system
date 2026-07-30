@@ -16,10 +16,19 @@ provider:
 
   region: us-east-1
 
+  timeout: 15
+  memorySize: 256
+  logsRetentionInDays: 7
+
+  tags:
+    Project: PurchaseApprovalSystem
+    Environment: ${self:provider.stage}
+    ManagedBy: Serverless
+
   environment:
     PURCHASE_REQUESTS_TABLE: PurchaseRequests-${self:provider.stage}
     APPROVALS_TABLE: Approvals-${self:provider.stage}
-    S3_BUCKET_NAME: purchase-evidence-bucket-${self:provider.stage}
+    S3_BUCKET_NAME: !Ref EvidenceBucket
     NODE_ENV: ${self:provider.stage}
 
   iamRoleStatements:
@@ -39,8 +48,10 @@ provider:
       Action:
         - s3:PutObject
         - s3:GetObject
+        - s3:PutObjectAcl
       Resource:
-        - arn:aws:s3:::purchase-evidence-bucket-${self:provider.stage}/*
+        - !Sub "arn:aws:s3:::${EvidenceBucket}"
+        - !Sub "arn:aws:s3:::${EvidenceBucket}/*"
 
 package:
   individually: true
@@ -54,10 +65,14 @@ custom:
     platform: node
     format: cjs
     keepNames: true
+    external:
+      - pdfkit
 
   serverless-offline:
     httpPort: 3000
+    lambdaPort: 4002
     lambdaHandler: handler
+    location: .esbuild/.build
     noPrependStageInUrl: true
 
   dynamodb:
@@ -117,7 +132,7 @@ resources:
     EvidenceBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: purchase-evidence-bucket-${self:provider.stage}
+        BucketName: !Sub "purchase-approval-evidence-${self:provider.stage}-${AWS::AccountId}"
         PublicAccessBlockConfiguration:
           BlockPublicAcls: true
           BlockPublicPolicy: true

@@ -5,7 +5,7 @@ const { ModuleFederationPlugin } = require("webpack").container;
 
 module.exports = (env, argv) => {
   const mode = argv.mode || "development";
-  const port = 3000;
+  const port = 3001;
 
   return {
     mode,
@@ -13,6 +13,7 @@ module.exports = (env, argv) => {
     output: {
       path: path.resolve(__dirname, "dist"),
       publicPath: `http://localhost:${port}/`,
+      crossOriginLoading: "anonymous",
     },
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".jsx"],
@@ -26,7 +27,7 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.css$/,
-          use: ["style-loader", "css-loader"],
+          use: ["style-loader", "css-loader", "postcss-loader"],
         },
       ],
     },
@@ -56,6 +57,10 @@ module.exports = (env, argv) => {
       port,
       historyApiFallback: true,
       hot: true,
+      allowedHosts: "all",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
     },
   };
 };
