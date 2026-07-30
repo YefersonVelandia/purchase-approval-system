@@ -9,6 +9,7 @@ describe("ListApprovalsUseCase", () => {
         id: "approval-1",
         purchaseRequestId: "request-123",
         approverId: "manager-001",
+        approvalToken: "token-123",
         status: ApprovalStatus.PENDING,
         createdAt: new Date(),
         updatedAt: new Date(),

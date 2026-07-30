@@ -3,6 +3,7 @@ import { Approval, ApprovalStatus } from "../../domain/entities/approval.entity"
 import {
   PurchaseRequest,
   PurchaseRequestStatus,
+  ApproverRole,
 } from "../../domain/entities/purchase-request.entity";
 
 import { UpdateApprovalStatusUseCase } from "./update-approval-status.use-case";
@@ -16,6 +17,7 @@ describe("UpdateApprovalStatusUseCase", () => {
       id: "approval-123",
       purchaseRequestId: "request-123",
       approverId: "manager-001",
+      approvalToken: "token-123",
       status: ApprovalStatus.PENDING,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -27,6 +29,23 @@ describe("UpdateApprovalStatusUseCase", () => {
       description: "Developer laptop",
       amount: 1500,
       requesterId: "user-123",
+      approvers: [
+        {
+          name: "Juan Perez",
+          email: "juan@empresa.com",
+          role: ApproverRole.MANAGER,
+        },
+        {
+          name: "Maria Gomez",
+          email: "maria@empresa.com",
+          role: ApproverRole.FINANCE,
+        },
+        {
+          name: "Carlos Ruiz",
+          email: "carlos@empresa.com",
+          role: ApproverRole.LEGAL,
+        },
+      ],
       status: PurchaseRequestStatus.PENDING,
       createdAt: new Date(),
     });
@@ -89,6 +108,7 @@ describe("UpdateApprovalStatusUseCase", () => {
       id: "approval-123",
       purchaseRequestId: "request-123",
       approverId: "manager-001",
+      approvalToken: "token-123",
       status: ApprovalStatus.APPROVED,
       createdAt: new Date(),
       updatedAt: new Date(),

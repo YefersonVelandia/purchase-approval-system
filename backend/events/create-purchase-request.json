@@ -1,5 +1,5 @@
 {
-  "body": "{\"title\":\"Laptop\",\"description\":\"Developer laptop\",\"amount\":1500,\"requesterId\":\"user-123\"}",
+  "body": "{\"title\":\"Laptop\",\"description\":\"Developer laptop\",\"amount\":1500,\"requesterId\":\"user-123\",\"approvers\":[{\"name\":\"Juan Perez\",\"email\":\"juan@empresa.com\",\"role\":\"MANAGER\"},{\"name\":\"Maria Gomez\",\"email\":\"maria@empresa.com\",\"role\":\"FINANCE\"},{\"name\":\"Carlos Ruiz\",\"email\":\"carlos@empresa.com\",\"role\":\"LEGAL\"}]}",
   "headers": {},
   "requestContext": {}
 }

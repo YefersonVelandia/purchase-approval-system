@@ -1,4 +1,4 @@
-import { PurchaseRequest, PurchaseRequestStatus } from "./purchase-request.entity";
+import { PurchaseRequest, PurchaseRequestStatus, ApproverRole } from "./purchase-request.entity";
 
 describe("PurchaseRequest entity", () => {
   const createRequest = (status: PurchaseRequestStatus) =>
@@ -8,6 +8,23 @@ describe("PurchaseRequest entity", () => {
       description: "Developer laptop",
       amount: 1500,
       requesterId: "user-123",
+      approvers: [
+        {
+          name: "Juan Perez",
+          email: "juan@empresa.com",
+          role: ApproverRole.MANAGER,
+        },
+        {
+          name: "Maria Gomez",
+          email: "maria@empresa.com",
+          role: ApproverRole.FINANCE,
+        },
+        {
+          name: "Carlos Ruiz",
+          email: "carlos@empresa.com",
+          role: ApproverRole.LEGAL,
+        },
+      ],
       status,
       createdAt: new Date(),
     });
